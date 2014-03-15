@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><Model version="5.0">
+    <Configuration>
+        <Property name="dialect" value="PostgresDialect"/>
+        <Property name="ALIAS" value="tesoreria"/>
+        <Property name="DRIVER" value="org.postgresql.Driver"/>
+        <Property name="PASSWORD" value="pgsql"/>
+        <Property name="PROMPTFORPASSWORD" value="false"/>
+        <Property name="URL" value="jdbc:postgresql://localhost:5432/tesoreria"/>
+        <Property name="USER" value="postgres"/>
+    </Configuration>
+    <CustomTypes/>
+    <Domains/>
+    <Tables>
+        <Table id="13629fe8-a475-46d6-acab-27a0cc79b0bf" name="registro_pagos" schema="">
+            <Property name="LOCATION" value="71:105"/>
+            <Attribute datatype="bigserial" defaultvalue="" extra="" fraction="null" id="4790163b-24c2-4f6c-91b2-53686095d4a7" name="id" nullable="false" scale="10" size=""/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="11fee9d6-96c3-4b74-b3bf-2eb5e0a80449" name="tipo_operacion" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="c071cd8c-99f7-48ff-9c54-c2b190a93ed5" name="subtipo_operacion" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="b7e63290-dde8-45a9-846d-b05c29a76ef0" name="no_planilla" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="date" defaultvalue="" extra="" fraction="null" id="4a4b5c38-ddee-4319-bef9-ac8afadad019" name="fecha" nullable="true" scale="10" size=""/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="e3597807-3d57-41cd-9b6a-5641d5222e67" name="rp" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="775f87cf-865f-4442-b8f1-aeade60d9a4a" name="cuenta_origen" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="0a0cd6b9-6902-4c85-ab46-e79bb99d68e2" name="consecutivo" nullable="true" scale="10" size=""/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="bc802caf-35cd-49f1-a88e-2949cd9a7b20" name="nombre" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="7a110ff4-b1f8-4d14-bb8f-577b1a8a6ddc" name="num_id" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="numeric" defaultvalue="" extra="" fraction="2" id="669a75b2-0f2d-4923-bafd-8021b54a42b5" name="monto" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="numeric" defaultvalue="" extra="" fraction="2" id="d79359b4-5db7-4250-859e-392e5a541fd5" name="monto_abonado" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="d6f5ffd5-ed22-4278-a87a-2942998d67bb" name="no_cuenta" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="5b9d28ec-e248-4cdf-acca-0d42a4333a00" name="estado" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="ddb98833-8742-4f17-a723-a5977ea4a0b9" name="observacion" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="b0cd21f6-64b5-47ed-9c53-8bbb724aee59" name="mon_origen" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="0f4080bc-4e3f-4317-a34f-c421ba975ac5" name="otro" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="2a8b583a-41d4-414e-817e-081d0a17733a" name="mon_cuenta" nullable="true" scale="10" size="255"/>
+            <Index id="fc2dd5cb-4ab2-4cd7-89e8-d7b39e986f4f" indextype="PRIMARYKEY" name="registro_pagos_pk">
+                <Indexattribute attributerefid="4790163b-24c2-4f6c-91b2-53686095d4a7" id="eceb287b-de0d-409a-bb95-84b96a997435"/>
+            </Index>
+            <Index id="a7d24f8f-cde1-4ee0-be95-20ca2f5a753a" indextype="UNIQUE" name="registro_pagos_ui1">
+                <Indexattribute attributerefid="b7e63290-dde8-45a9-846d-b05c29a76ef0" id="fa842c87-559f-4b22-9c6e-57cf796476f5"/>
+                <Indexattribute attributerefid="0a0cd6b9-6902-4c85-ab46-e79bb99d68e2" id="2578e96c-3bdf-4d04-b306-ff7b112b90ae"/>
+                <Indexattribute attributerefid="4a4b5c38-ddee-4319-bef9-ac8afadad019" id="99fb3590-01f1-4f33-b71a-b6d4907a787d"/>
+            </Index>
+        </Table>
+        <Table id="736e552f-3deb-4003-b1a0-82f01a809dc4" name="proveedor" schema="">
+            <Property name="LOCATION" value="427:182"/>
+            <Attribute datatype="bigserial" defaultvalue="" extra="" fraction="null" id="fc7c5a37-662b-4a27-8247-173cd99140af" name="id" nullable="false" scale="10" size=""/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="afcb36f3-8d10-477f-89f2-ee50f07e0ce9" name="razon_social" nullable="true" scale="10" size="500"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="3ee39dff-aaf2-4438-b75c-db64f6b46f59" name="ruc" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="78d904a7-187a-4d85-8016-21f0543d0581" name="cod_servicio" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="aa4a7105-af0b-4f8c-8dc1-c0701fab1e5f" name="cod_opr" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="79a01d34-4c18-4f3f-b881-4bd13e3004dd" name="no_cuenta" nullable="true" scale="10" size="25"/>
+            <Index id="8117cd0f-2e22-4e4e-9fc7-e462cb6dc970" indextype="PRIMARYKEY" name="proveedor_pk">
+                <Indexattribute attributerefid="fc7c5a37-662b-4a27-8247-173cd99140af" id="8acfd1fa-85ed-43e0-8c4d-f2de333384b3"/>
+            </Index>
+            <Index id="e52b8d39-4668-4f18-b247-5908b6278f5c" indextype="UNIQUE" name="provedor_ui1">
+                <Indexattribute attributerefid="3ee39dff-aaf2-4438-b75c-db64f6b46f59" id="bfc2db01-8ccc-4f5d-ad85-2aa326d0b604"/>
+            </Index>
+        </Table>
+        <Table id="3fbe3a0e-a047-45d8-8316-37b3037bafde" name="detracciones" schema="">
+            <Property name="LOCATION" value="850:208"/>
+            <Attribute datatype="bigserial" defaultvalue="" extra="" fraction="null" id="eb43ae17-61fb-41bf-ab76-85eaa1c1d5dd" name="id" nullable="false" scale="10" size=""/>
+            <Attribute datatype="bigint" defaultvalue="" extra="" fraction="null" id="710e8b83-c5c7-4065-b331-faf29085f875" name="id_proveedor" nullable="true" scale="10" size=""/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="bb322d68-e367-4dac-9f63-b552fb5f776f" name="cod_servicio" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="numeric" defaultvalue="" extra="" fraction="2" id="3d61e841-651a-4970-8ee3-c1e87491280d" name="importe" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="fb867e72-9f8d-4feb-ac5c-b1619cf34b84" name="cod_operacion" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="bb95c9da-a8aa-4e20-b5c6-1434b19fc860" name="periodo_tributario" nullable="true" scale="10" size="6"/>
+            <Attribute datatype="bigint" defaultvalue="" extra="" fraction="null" id="e074794b-2dd9-4468-8cad-875d976ccba1" name="id_adquiriente" nullable="true" scale="10" size=""/>
+            <Attribute datatype="date" defaultvalue="now()" extra="" fraction="null" id="415f6747-3070-4c59-890d-f870d1f94b31" name="fecha_carga" nullable="true" scale="10" size=""/>
+            <Index id="b095df1e-7026-4e3f-81a2-407419f83ddc" indextype="PRIMARYKEY" name="detracciones_pk">
+                <Indexattribute attributerefid="eb43ae17-61fb-41bf-ab76-85eaa1c1d5dd" id="877c47b4-6dd2-4671-a62f-4970b2f7ada9"/>
+            </Index>
+        </Table>
+        <Table id="d4085da0-79bd-4705-b75a-fefd9d97af5d" name="adquiriente" schema="">
+            <Property name="LOCATION" value="587:20"/>
+            <Attribute datatype="bigserial" defaultvalue="" extra="" fraction="null" id="4bb55603-2749-4562-9e9b-85ae57d6e4fb" name="id" nullable="false" scale="10" size=""/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="114fc314-6223-48d5-9516-be8a904c46b9" name="ruc" nullable="true" scale="10" size="50"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="b55090b4-399b-47cd-aca4-b4658af8cdb7" name="nombre" nullable="true" scale="10" size="500"/>
+            <Index id="2f0a92f9-b88b-4d1b-b43b-df5796b25334" indextype="PRIMARYKEY" name="adquiriente_pk">
+                <Indexattribute attributerefid="4bb55603-2749-4562-9e9b-85ae57d6e4fb" id="59c8eef4-7a9e-4dc1-84db-49e571b86fd0"/>
+            </Index>
+            <Index id="70d2e27c-fa39-47d5-9c25-8027fa734978" indextype="UNIQUE" name="adquiriente_ui1">
+                <Indexattribute attributerefid="114fc314-6223-48d5-9516-be8a904c46b9" id="99585ea9-5a7b-45d9-a768-a4a3f1ab8c31"/>
+            </Index>
+        </Table>
+    </Tables>
+    <Relations>
+        <Relation exportingtablerefid="736e552f-3deb-4003-b1a0-82f01a809dc4" id="b24978a7-ac49-4740-98b2-757d61c3e6b9" importingtablerefid="3fbe3a0e-a047-45d8-8316-37b3037bafde" name="proveedor_detre_fk" ondelete="NOTHING" onupdate="NOTHING">
+            <Mapping exportingexpressionrefid="8acfd1fa-85ed-43e0-8c4d-f2de333384b3" importingattributerefid="710e8b83-c5c7-4065-b331-faf29085f875"/>
+        </Relation>
+        <Relation exportingtablerefid="d4085da0-79bd-4705-b75a-fefd9d97af5d" id="3ecb31fb-4f5d-4888-8be6-7b07c4f72e30" importingtablerefid="3fbe3a0e-a047-45d8-8316-37b3037bafde" name="adq_fk" ondelete="NOTHING" onupdate="NOTHING">
+            <Mapping exportingexpressionrefid="59c8eef4-7a9e-4dc1-84db-49e571b86fd0" importingattributerefid="e074794b-2dd9-4468-8cad-875d976ccba1"/>
+        </Relation>
+    </Relations>
+    <Views/>
+    <Subjectareas/>
+    <Comments/>
+</Model>

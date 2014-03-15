@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><Model version="5.0">
+    <Configuration>
+        <Property name="dialect" value="PostgresDialect"/>
+        <Property name="ALIAS" value="tesoreria"/>
+        <Property name="DRIVER" value="org.postgresql.Driver"/>
+        <Property name="PASSWORD" value="pgsql"/>
+        <Property name="PROMPTFORPASSWORD" value="false"/>
+        <Property name="URL" value="jdbc:postgresql://localhost:5432/tesoreria"/>
+        <Property name="USER" value="postgres"/>
+    </Configuration>
+    <CustomTypes/>
+    <Domains/>
+    <Tables>
+        <Table id="13629fe8-a475-46d6-acab-27a0cc79b0bf" name="registro_pagos" schema="">
+            <Property name="LOCATION" value="319:111"/>
+            <Attribute datatype="bigserial" defaultvalue="" extra="" fraction="null" id="4790163b-24c2-4f6c-91b2-53686095d4a7" name="id" nullable="false" scale="10" size=""/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="11fee9d6-96c3-4b74-b3bf-2eb5e0a80449" name="tipo_operacion" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="c071cd8c-99f7-48ff-9c54-c2b190a93ed5" name="subtipo_operacion" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="b7e63290-dde8-45a9-846d-b05c29a76ef0" name="no_planilla" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="date" defaultvalue="" extra="" fraction="null" id="4a4b5c38-ddee-4319-bef9-ac8afadad019" name="fecha" nullable="true" scale="10" size=""/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="e3597807-3d57-41cd-9b6a-5641d5222e67" name="rp" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="775f87cf-865f-4442-b8f1-aeade60d9a4a" name="cuenta_origen" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="0a0cd6b9-6902-4c85-ab46-e79bb99d68e2" name="consecutivo" nullable="true" scale="10" size=""/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="bc802caf-35cd-49f1-a88e-2949cd9a7b20" name="nombre" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="7a110ff4-b1f8-4d14-bb8f-577b1a8a6ddc" name="num_id" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="numeric" defaultvalue="" extra="" fraction="2" id="669a75b2-0f2d-4923-bafd-8021b54a42b5" name="monto" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="numeric" defaultvalue="" extra="" fraction="2" id="d79359b4-5db7-4250-859e-392e5a541fd5" name="monto_abonado" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="d6f5ffd5-ed22-4278-a87a-2942998d67bb" name="no_cuenta" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="5b9d28ec-e248-4cdf-acca-0d42a4333a00" name="estado" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="ddb98833-8742-4f17-a723-a5977ea4a0b9" name="observacion" nullable="true" scale="10" size="255"/>
+            <Index id="fc2dd5cb-4ab2-4cd7-89e8-d7b39e986f4f" indextype="PRIMARYKEY" name="registro_pagos_pk">
+                <Indexattribute attributerefid="4790163b-24c2-4f6c-91b2-53686095d4a7" id="eceb287b-de0d-409a-bb95-84b96a997435"/>
+            </Index>
+            <Index id="a7d24f8f-cde1-4ee0-be95-20ca2f5a753a" indextype="UNIQUE" name="registro_pagos_ui1">
+                <Indexattribute attributerefid="b7e63290-dde8-45a9-846d-b05c29a76ef0" id="fa842c87-559f-4b22-9c6e-57cf796476f5"/>
+                <Indexattribute attributerefid="0a0cd6b9-6902-4c85-ab46-e79bb99d68e2" id="2578e96c-3bdf-4d04-b306-ff7b112b90ae"/>
+                <Indexattribute attributerefid="4a4b5c38-ddee-4319-bef9-ac8afadad019" id="99fb3590-01f1-4f33-b71a-b6d4907a787d"/>
+            </Index>
+        </Table>
+    </Tables>
+    <Relations/>
+    <Views/>
+    <Subjectareas/>
+    <Comments/>
+</Model>
