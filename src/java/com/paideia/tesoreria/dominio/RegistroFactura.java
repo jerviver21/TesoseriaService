@@ -48,6 +48,8 @@ public class RegistroFactura implements Serializable {
     @Size(max = 255)
     @Column(name = "no_factura")
     private String noFactura;
+    @Column(name = "url_soporte")
+    private String urlSoporte;
     @Size(max = 255)
     @Column(name = "area_entrega_fact")
     private String areaEntregaFact;
@@ -297,6 +299,20 @@ public class RegistroFactura implements Serializable {
      */
     public void setImg(InputStream img) {
         this.img = img;
+    }
+
+    /**
+     * @return the urlSoporte
+     */
+    public String getUrlSoporte() {
+        return urlSoporte;
+    }
+
+    /**
+     * @param urlSoporte the urlSoporte to set
+     */
+    public void setUrlSoporte(String urlSoporte) {
+        this.urlSoporte = urlSoporte;
     }
     
 }

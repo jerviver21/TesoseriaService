@@ -161,6 +161,7 @@
             <Attribute datatype="bigint" defaultvalue="" extra="" fraction="null" id="e1c8e8c0-9797-4e87-8d1a-c85a039baa41" name="id_empresa" nullable="true" scale="10" size=""/>
             <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="8ac52ad6-c382-4604-9694-e10f762d4e59" name="id_estado" nullable="true" scale="10" size=""/>
             <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="48bad603-54ed-4c5a-9b00-3d8ccad197b6" name="id_cuenta_proveedor" nullable="true" scale="10" size=""/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="bae1df8b-1135-4f18-bd86-f914a12b8add" name="url_soporte" nullable="true" scale="10" size="1500"/>
             <Index id="35ae7767-79d8-4454-892c-425881e9a214" indextype="PRIMARYKEY" name="registro_factura_pk">
                 <Indexattribute attributerefid="448094df-e787-4b46-b6b2-afbc738995f9" id="279e589c-c13f-448f-b3bc-e8dfb2d34fb2"/>
             </Index>
