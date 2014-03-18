@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -56,6 +55,8 @@ public class TeleceService {
     @EJB
     GeneralService generalService;
     
+    @EJB
+    FacturaService fService;
     
     public TeleceService(){
         locator = ParameterLocator.getInstance();
@@ -70,6 +71,18 @@ public class TeleceService {
             return null;
         }
         return registro.get(0);
+    }
+    
+    public List<RegistroPago> findPagosByRuc(String ruc){
+        List<RegistroPago> registros = em.createNamedQuery("RegistroPago.findByRuc")
+                .setParameter("ruc", ruc).getResultList();
+        return registros;
+    }
+    
+    public List<RegistroPago> findPagosByFact(String no){
+        List<RegistroPago> registros = em.createNamedQuery("RegistroPago.findByFact")
+                .setParameter("no", no).getResultList();
+        return registros;
     }
     
 
@@ -189,11 +202,11 @@ public class TeleceService {
                         to.getNotificaciones().add(crearNotificacion(nombreArchivo, "RUC", ruc
                                 , "Nuevo Proveedor: -"+datosreg[1].trim()+"-"+ruc, "NOVEDAD", noLicencia));
                     }else{
-                        if(!provedor.getRazonSocial().equals(datosreg[1].trim())){
+                        if(!provedor.getRazonSocial().trim().equals(datosreg[1].trim())){
                             to.getNotificaciones().add(crearNotificacion(nombreArchivo, "RUC", ruc
                                 , "La razon social del ruc "+ruc+" está "
-                                    + "registrada como "+provedor.getRazonSocial()+" - "
-                                        + "y en la planilla como "+datosreg[1].trim(), "INCONSISTENCIA", noLicencia));
+                                    + "registrada como -"+provedor.getRazonSocial()+"-  "
+                                        + "y en la planilla como -"+datosreg[1].trim()+"-", "INCONSISTENCIA", noLicencia));
                             to.incrementInconsistencias();
                         }
                     }
@@ -273,7 +286,10 @@ public class TeleceService {
 
         for(RegistroPago registro:pagos){
             if(!registro.isCargado()){
-                em.merge(registro);
+                registro = em.merge(registro);
+                if(registro.getNoFactura() != null){
+                    fService.pagarFactura(registro.getNoFactura(), registro);
+                }
             }
         }
         for(Notificacion registro:notificaciones){
@@ -296,6 +312,10 @@ public class TeleceService {
         
         
         return noti;
+    }
+
+    public RegistroPago findPagos(Long id) {
+        return em.find(RegistroPago.class, id);
     }
 
 }

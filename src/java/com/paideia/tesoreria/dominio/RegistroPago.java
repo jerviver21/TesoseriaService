@@ -9,7 +9,6 @@ package com.paideia.tesoreria.dominio;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +20,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -36,6 +34,8 @@ import javax.validation.constraints.Size;
 @Table(name = "registro_pago")
 @NamedQueries({
     @NamedQuery(name = "RegistroPago.findAll", query = "SELECT r FROM RegistroPago r"),
+    @NamedQuery(name = "RegistroPago.findByRuc", query = "SELECT r FROM RegistroPago r WHERE r.proveedor.ruc =:ruc"),
+    @NamedQuery(name = "RegistroPago.findByFact", query = "SELECT r FROM RegistroPago r WHERE r.noFactura =:no"),
     @NamedQuery(name = "RegistroPago.findRegistro", query = "SELECT r FROM RegistroPago r WHERE r.noPlanilla =:planilla AND r.consecutivo =:cons AND r.fechaPago =:fecha")
 })
 public class RegistroPago implements Serializable {
@@ -76,9 +76,6 @@ public class RegistroPago implements Serializable {
     @Size(max = 255)
     @Column(name = "no_factura")
     private String noFactura;
-    @Size(max = 255)
-    @Column(name = "no_detraccion")
-    private String noDetraccion;
     @Size(max = 1000)
     @Column(name = "sede_empresa")
     private String sedeEmpresa;
@@ -111,6 +108,9 @@ public class RegistroPago implements Serializable {
     @JoinColumn(name = "id_cuenta_origen", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private CuentasEmpresa cuentaOrigen;
+    @JoinColumn(name = "id_detraccion", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Detraccion detraccion;
     
     
     @Transient
@@ -217,14 +217,6 @@ public class RegistroPago implements Serializable {
 
     public void setNoFactura(String noFactura) {
         this.noFactura = noFactura;
-    }
-
-    public String getNoDetraccion() {
-        return noDetraccion;
-    }
-
-    public void setNoDetraccion(String noDetraccion) {
-        this.noDetraccion = noDetraccion;
     }
 
     public String getDescDestino() {
@@ -369,6 +361,20 @@ public class RegistroPago implements Serializable {
      */
     public void setMonDes(String monDes) {
         this.monDes = monDes;
+    }
+
+    /**
+     * @return the detraccion
+     */
+    public Detraccion getDetraccion() {
+        return detraccion;
+    }
+
+    /**
+     * @param detraccion the detraccion to set
+     */
+    public void setDetraccion(Detraccion detraccion) {
+        this.detraccion = detraccion;
     }
     
 }

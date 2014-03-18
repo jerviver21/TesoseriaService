@@ -6,6 +6,7 @@
 
 package com.paideia.tesoreria.dominio;
 
+import com.vi.comun.util.FechaUtils;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -34,7 +35,11 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "registro_factura")
 @NamedQueries({
-    @NamedQuery(name = "RegistroFactura.findAll", query = "SELECT r FROM RegistroFactura r")})
+    @NamedQuery(name = "RegistroFactura.findAll", query = "SELECT r FROM RegistroFactura r"),
+    @NamedQuery(name = "RegistroFactura.findByNo", query = "SELECT r  FROM RegistroFactura r  WHERE r.numFactura =:no ORDER BY r.estado.id ASC, r.fechaVencimiento ASC"),
+    @NamedQuery(name = "RegistroFactura.findByRuc", query = "SELECT r FROM RegistroFactura r WHERE r.proveedor.ruc =:ruc  ORDER BY r.estado.id ASC, r.fechaVencimiento ASC"),
+    @NamedQuery(name = "RegistroFactura.findXVencer", query = "SELECT r FROM RegistroFactura r  WHERE r.fechaVencimiento  <=:fecha  ORDER BY r.estado.id ASC, r.fechaVencimiento ASC")
+})
 public class RegistroFactura implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -42,12 +47,13 @@ public class RegistroFactura implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @Column(name = "serie_factura")
+    private Integer serieFactura;
     @Size(max = 255)
-    @Column(name = "serie_fact")
-    private String serieFact;
-    @Size(max = 255)
-    @Column(name = "no_factura")
-    private String noFactura;
+    @Column(name = "serie_no_factura")
+    private String serieNoFactura;
+    @Column(name = "num_factura")
+    private Long numFactura;
     @Column(name = "url_soporte")
     private String urlSoporte;
     @Size(max = 255)
@@ -98,6 +104,9 @@ public class RegistroFactura implements Serializable {
     
     @Transient
     private InputStream img;
+    
+    @Transient
+    private int noDiasVence;
 
     public RegistroFactura() {
         proveedor = new Proveedor();
@@ -120,21 +129,7 @@ public class RegistroFactura implements Serializable {
         this.id = id;
     }
 
-    public String getSerieFact() {
-        return serieFact;
-    }
-
-    public void setSerieFact(String serieFact) {
-        this.serieFact = serieFact;
-    }
-
-    public String getNoFactura() {
-        return noFactura;
-    }
-
-    public void setNoFactura(String noFactura) {
-        this.noFactura = noFactura;
-    }
+    
 
     public String getAreaEntregaFact() {
         return areaEntregaFact;
@@ -313,6 +308,62 @@ public class RegistroFactura implements Serializable {
      */
     public void setUrlSoporte(String urlSoporte) {
         this.urlSoporte = urlSoporte;
+    }
+
+    /**
+     * @return the serieFactura
+     */
+    public Integer getSerieFactura() {
+        return serieFactura;
+    }
+
+    /**
+     * @param serieFactura the serieFactura to set
+     */
+    public void setSerieFactura(Integer serieFactura) {
+        this.serieFactura = serieFactura;
+    }
+
+    /**
+     * @return the serieNoFactura
+     */
+    public String getSerieNoFactura() {
+        return serieNoFactura;
+    }
+
+    /**
+     * @param serieNoFactura the serieNoFactura to set
+     */
+    public void setSerieNoFactura(String serieNoFactura) {
+        this.serieNoFactura = serieNoFactura;
+    }
+
+    /**
+     * @return the numFactura
+     */
+    public Long getNumFactura() {
+        return numFactura;
+    }
+
+    /**
+     * @param numFactura the numFactura to set
+     */
+    public void setNumFactura(Long numFactura) {
+        this.numFactura = numFactura;
+    }
+
+    /**
+     * @return the noDiasVence
+     */
+    public int getNoDiasVence() {
+        return estado.getId()==1?FechaUtils.getNroDiasPara(fechaVencimiento):1000;
+    }
+
+    /**
+     * @param noDiasVence the noDiasVence to set
+     */
+    public void setNoDiasVence(int noDiasVence) {
+        this.noDiasVence = noDiasVence;
     }
     
 }

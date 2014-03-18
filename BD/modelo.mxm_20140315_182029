@@ -25,6 +25,7 @@
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="ddb98833-8742-4f17-a723-a5977ea4a0b9" name="observacion" nullable="true" scale="10" size="255"/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="0f4080bc-4e3f-4317-a34f-c421ba975ac5" name="otra_informacion" nullable="true" scale="10" size="255"/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="d62a754c-7ffe-4852-98fd-37ac7098e08c" name="no_factura" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="2b8f86d0-756b-4c5f-a1c9-99bd5dc23ddd" name="no_detraccion" nullable="true" scale="10" size="255"/>
             <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="1f393c94-6908-4a50-95ac-53fc81690ba1" name="id_estado" nullable="true" scale="10" size=""/>
             <Attribute datatype="bigint" defaultvalue="" extra="" fraction="null" id="33b466e8-1e91-4e31-840c-7975f03f637a" name="id_proveedor" nullable="true" scale="10" size=""/>
             <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="27561b08-93be-4555-b08c-7463922aab2d" name="id_cuenta_origen" nullable="true" scale="10" size=""/>
@@ -37,7 +38,6 @@
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="4adad916-1b44-4004-bce4-e5b8f933c80b" name="nombre" nullable="true" scale="10" size="1000"/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="35cacad0-3bd3-48ce-aa4b-1983829089a1" name="mon_org" nullable="true" scale="10" size="10"/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="a0211c4f-002c-498f-862e-f1991f4f013d" name="mon_des" nullable="true" scale="10" size="10"/>
-            <Attribute datatype="bigint" defaultvalue="" extra="" fraction="null" id="43b1272b-4a03-400f-b79d-2072a000a1d2" name="id_detraccion" nullable="true" scale="10" size=""/>
             <Index id="fc2dd5cb-4ab2-4cd7-89e8-d7b39e986f4f" indextype="PRIMARYKEY" name="registro_pagos_pk">
                 <Indexattribute attributerefid="4790163b-24c2-4f6c-91b2-53686095d4a7" id="eceb287b-de0d-409a-bb95-84b96a997435"/>
             </Index>
@@ -146,7 +146,8 @@
             <Property name="LOCATION" value="416:218"/>
             <Attribute datatype="bigserial" defaultvalue="" extra="" fraction="null" id="448094df-e787-4b46-b6b2-afbc738995f9" name="id" nullable="false" scale="10" size=""/>
             <Attribute datatype="bigint" defaultvalue="" extra="" fraction="null" id="5ed14d1b-982b-45c9-a320-dda5fcbd998e" name="id_proveedor" nullable="true" scale="10" size=""/>
-            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="662e2580-a173-4922-9bd5-7a77a4983ad2" name="serie_no_factura" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="eaabe372-1a63-4738-a743-40ad024e6df2" name="serie_fact" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="662e2580-a173-4922-9bd5-7a77a4983ad2" name="no_factura" nullable="true" scale="10" size="255"/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="9bc65eb0-f87c-4c2c-853e-9d41b3eb5439" name="area_entrega_fact" nullable="true" scale="10" size="255"/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="1d4d319f-6fe6-4477-a41e-d798240a286c" name="persona_entrega_fact" nullable="true" scale="10" size="255"/>
             <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="2dbd9892-f280-403d-be9e-b9cf9252b1b7" name="id_acuerdo_pago" nullable="true" scale="10" size=""/>
@@ -161,8 +162,6 @@
             <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="8ac52ad6-c382-4604-9694-e10f762d4e59" name="id_estado" nullable="true" scale="10" size=""/>
             <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="48bad603-54ed-4c5a-9b00-3d8ccad197b6" name="id_cuenta_proveedor" nullable="true" scale="10" size=""/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="bae1df8b-1135-4f18-bd86-f914a12b8add" name="url_soporte" nullable="true" scale="10" size="1500"/>
-            <Attribute datatype="bigint" defaultvalue="" extra="" fraction="null" id="0f60f7e3-e069-417a-a168-bb9969ed6319" name="num_factura" nullable="true" scale="10" size=""/>
-            <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="c55941df-c2c9-4956-92d9-b245c7ff2448" name="serie_factura" nullable="true" scale="10" size=""/>
             <Index id="35ae7767-79d8-4454-892c-425881e9a214" indextype="PRIMARYKEY" name="registro_factura_pk">
                 <Indexattribute attributerefid="448094df-e787-4b46-b6b2-afbc738995f9" id="279e589c-c13f-448f-b3bc-e8dfb2d34fb2"/>
             </Index>
@@ -230,9 +229,6 @@
         </Relation>
         <Relation exportingtablerefid="9fab82d3-0d96-4bd7-a97c-356c0c154c90" id="8239bbcc-25bd-400d-9ae8-0777864ddc1d" importingtablerefid="95bc11d9-4190-4fe1-8936-7edcfa269807" name="cuenta_fact_fk" ondelete="NOTHING" onupdate="NOTHING">
             <Mapping exportingexpressionrefid="3c6fa49b-c9ba-40a5-b50d-ec35f3228a71" importingattributerefid="48bad603-54ed-4c5a-9b00-3d8ccad197b6"/>
-        </Relation>
-        <Relation exportingtablerefid="3fbe3a0e-a047-45d8-8316-37b3037bafde" id="734bc184-be9d-4d84-a418-088a1eba8ee4" importingtablerefid="13629fe8-a475-46d6-acab-27a0cc79b0bf" name="detracion_pago_fk" ondelete="NOTHING" onupdate="NOTHING">
-            <Mapping exportingexpressionrefid="877c47b4-6dd2-4671-a62f-4970b2f7ada9" importingattributerefid="43b1272b-4a03-400f-b79d-2072a000a1d2"/>
         </Relation>
     </Relations>
     <Views/>

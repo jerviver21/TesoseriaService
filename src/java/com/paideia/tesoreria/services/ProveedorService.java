@@ -42,6 +42,7 @@ public class ProveedorService {
     }
     
     public Proveedor saveProveedor(Proveedor proveedor){
+        proveedor.setInfoActualizada(Boolean.TRUE);
         return  em.merge(proveedor);
     }
     
