@@ -802,22 +802,11 @@ exists or setup the property manually. For example like this:
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="compile,-library-inclusion-in-archive-weblogic,-library-inclusion-in-archive-by-user" name="library-inclusion-in-archive"/>
-    <target if="is.jars.in.ejbjar" name="-library-inclusion-in-archive-by-user">
-        <copyfiles files="${reference.UsuariosServices.dist}" todir="${build.classes.dir}"/>
-        <copyfiles files="${reference.ComunServices.dist}" todir="${build.classes.dir}"/>
-    </target>
+    <target if="is.jars.in.ejbjar" name="-library-inclusion-in-archive-by-user"/>
     <target if="is.server.weblogic" name="-library-inclusion-in-archive-weblogic">
-        <basename file="${reference.UsuariosServices.dist}" property="manifest.reference.UsuariosServices.dist"/>
-        <basename file="${reference.ComunServices.dist}" property="manifest.reference.ComunServices.dist"/>
-        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 "/>
-            <attribute name="jar-1-Extension-Name" value="${manifest.reference.UsuariosServices.dist}"/>
-            <attribute name="jar-2-Extension-Name" value="${manifest.reference.ComunServices.dist}"/>
-        </manifest>
+        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
-        <copyfiles files="${reference.UsuariosServices.dist}" todir="${dist.ear.dir}"/>
-        <copyfiles files="${reference.ComunServices.dist}" todir="${dist.ear.dir}"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">

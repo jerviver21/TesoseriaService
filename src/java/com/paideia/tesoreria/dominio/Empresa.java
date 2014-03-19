@@ -45,6 +45,21 @@ public class Empresa implements Serializable {
     @Size(max = 500)
     @Column(name = "nombre")
     private String nombre;
+    
+    
+    @Size(max = 500)
+    @Column(name = "telefono_fijo")
+    private String fijo;
+    @Size(max = 500)
+    @Column(name = "telefono_celular")
+    private String celular;
+    @Size(max = 500)
+    @Column(name = "persona_contacto")
+    private String persona;
+    @Size(max = 500)
+    @Column(name = "email")
+    private String email;
+    
     @Column(name = "consecutivo")
     private Integer consecutivo;
     @Size(max = 500)
@@ -133,6 +148,62 @@ public class Empresa implements Serializable {
     @Override
     public String toString() {
         return "com.paideia.tesoreria.dominio.Empresa[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the fijo
+     */
+    public String getFijo() {
+        return fijo;
+    }
+
+    /**
+     * @param fijo the fijo to set
+     */
+    public void setFijo(String fijo) {
+        this.fijo = fijo;
+    }
+
+    /**
+     * @return the celular
+     */
+    public String getCelular() {
+        return celular;
+    }
+
+    /**
+     * @param celular the celular to set
+     */
+    public void setCelular(String celular) {
+        this.celular = celular;
+    }
+
+    /**
+     * @return the persona
+     */
+    public String getPersona() {
+        return persona;
+    }
+
+    /**
+     * @param persona the persona to set
+     */
+    public void setPersona(String persona) {
+        this.persona = persona;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
     }
     
 }
