@@ -23,6 +23,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 /**
@@ -32,7 +33,12 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "detraccion")
 @NamedQueries({
-    @NamedQuery(name = "Detraccion.findAll", query = "SELECT d FROM Detraccion d")})
+    @NamedQuery(name = "Detraccion.findAll", query = "SELECT d FROM Detraccion d"),
+    @NamedQuery(name = "Detraccion.findByFact", query = "SELECT d FROM Detraccion d WHERE d.noFactura =:no"),
+    @NamedQuery(name = "Detraccion.findForComprobante", query = "SELECT d FROM Detraccion d "
+            + "WHERE d.archivoOut =:archivo AND d.codServicio =:servicio AND d.codOperacion =:opr AND "
+            + "d.periodoTributario =:periodo AND d.proveedor.ruc =:ruc AND d.importe =:importe ")
+})
 public class Detraccion implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -55,6 +61,21 @@ public class Detraccion implements Serializable {
     @Column(name = "fecha_carga")
     @Temporal(TemporalType.DATE)
     private Date fechaCarga;
+    
+    @Column(name = "fecha_emision")
+    @Temporal(TemporalType.DATE)
+    private Date fechaEmision;
+    
+    @Column(name = "base_imponible")
+    private BigDecimal base;
+    @Column(name = "monto_total")
+    private BigDecimal montoTotal;
+    @Column(name = "porcentaje")
+    private Integer porcentaje;
+    
+    
+    
+    
     @Size(max = 255)
     @Column(name = "comprobante")
     private String comprobante;
@@ -76,8 +97,12 @@ public class Detraccion implements Serializable {
     @JoinColumn(name = "id_empresa", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Empresa empresa;
+    
+    @Transient
+    private boolean cargadoComprobante = false;
 
     public Detraccion() {
+        proveedor = new Proveedor();
     }
 
     public Detraccion(Long id) {
@@ -211,6 +236,76 @@ public class Detraccion implements Serializable {
     @Override
     public String toString() {
         return "com.paideia.tesoreria.dominio.Detraccion[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the cargadoComprobante
+     */
+    public boolean isCargadoComprobante() {
+        return cargadoComprobante;
+    }
+
+    /**
+     * @param cargadoComprobante the cargadoComprobante to set
+     */
+    public void setCargadoComprobante(boolean cargadoComprobante) {
+        this.cargadoComprobante = cargadoComprobante;
+    }
+
+    /**
+     * @return the fechaEmision
+     */
+    public Date getFechaEmision() {
+        return fechaEmision;
+    }
+
+    /**
+     * @param fechaEmision the fechaEmision to set
+     */
+    public void setFechaEmision(Date fechaEmision) {
+        this.fechaEmision = fechaEmision;
+    }
+
+    /**
+     * @return the base
+     */
+    public BigDecimal getBase() {
+        return base;
+    }
+
+    /**
+     * @param base the base to set
+     */
+    public void setBase(BigDecimal base) {
+        this.base = base;
+    }
+
+    /**
+     * @return the montoTotal
+     */
+    public BigDecimal getMontoTotal() {
+        return montoTotal;
+    }
+
+    /**
+     * @param montoTotal the montoTotal to set
+     */
+    public void setMontoTotal(BigDecimal montoTotal) {
+        this.montoTotal = montoTotal;
+    }
+
+    /**
+     * @return the porcentaje
+     */
+    public Integer getPorcentaje() {
+        return porcentaje;
+    }
+
+    /**
+     * @param porcentaje the porcentaje to set
+     */
+    public void setPorcentaje(Integer porcentaje) {
+        this.porcentaje = porcentaje;
     }
     
 }

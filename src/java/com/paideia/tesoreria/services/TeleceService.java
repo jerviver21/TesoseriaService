@@ -7,6 +7,7 @@ package com.paideia.tesoreria.services;
 
 import com.paideia.tesoreria.dominio.CuentasEmpresa;
 import com.paideia.tesoreria.dominio.CuentasProveedor;
+import com.paideia.tesoreria.dominio.Detraccion;
 import com.paideia.tesoreria.dominio.Empresa;
 import com.paideia.tesoreria.dominio.EstadoPago;
 import com.paideia.tesoreria.dominio.Notificacion;
@@ -198,6 +199,7 @@ public class TeleceService {
                         provedor = new Proveedor();
                         provedor.setRazonSocial(datosreg[1].trim());
                         provedor.setRuc(ruc);
+                        provedor.setInfoActualizada(Boolean.FALSE);
                         provedor = provedorService.saveProveedor(provedor);
                         to.getNotificaciones().add(crearNotificacion(nombreArchivo, "RUC", ruc
                                 , "Nuevo Proveedor: -"+datosreg[1].trim()+"-"+ruc, "NOVEDAD", noLicencia));
@@ -289,6 +291,7 @@ public class TeleceService {
                 registro = em.merge(registro);
                 if(registro.getNoFactura() != null){
                     fService.pagarFactura(registro.getNoFactura(), registro);
+                    asociarDetraccionPago(registro);
                 }
             }
         }
@@ -316,6 +319,22 @@ public class TeleceService {
 
     public RegistroPago findPagos(Long id) {
         return em.find(RegistroPago.class, id);
+    }
+
+    public void asociarDetraccionPago(Detraccion detraccion) {
+        List<RegistroPago> pagos = em.createNamedQuery("RegistroPago.findByFact").setParameter("no", detraccion.getNoFactura()).getResultList();
+        for(RegistroPago pago : pagos){
+            pago.setDetraccion(detraccion);
+            em.merge(pago);
+        }
+    }
+    
+    public void asociarDetraccionPago(RegistroPago pago) {
+        List<Detraccion> pagos = em.createNamedQuery("Detraccion.findByFact").setParameter("no", pago.getNoFactura()).getResultList();
+        if(!pagos.isEmpty()){
+            pago.setDetraccion(pagos.get(0));
+            em.merge(pago);
+        }
     }
 
 }

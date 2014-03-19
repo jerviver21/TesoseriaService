@@ -20,6 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
@@ -39,22 +41,35 @@ public class DetraService {
     ParameterLocator locator;
     SimpleDateFormat formatFecha = new SimpleDateFormat("yyyy-MM-dd");
     
+    @EJB
+    EmpresaService eService;
+    
+    @EJB
+    TeleceService pService;
+    
+    @EJB
+    ProveedorService prService;
+    
+    @EJB
+    GeneralService gService;
+    
+    
     public DetraService(){
         locator = ParameterLocator.getInstance();
     }
     
-    public Proveedor findProveedor(String ruc){
-        List<Proveedor> registro = em.createNamedQuery("Proveedor.findByRuc")
-                .setParameter("ruc", ruc).getResultList();
-        if(registro.isEmpty()){
-            return null;
-        }
-        return registro.get(0);
-    }
-    
 
-    public List<Detraccion> cargar(InputStream inputstream, String nombreArchivo, Empresa adq, Integer periodo)throws Exception{
-        List<Detraccion> registros = new ArrayList<Detraccion>();
+    public void cargarCuentas(InputStream inputstream, String nombreArchivo, String noLicencia)throws Exception{
+        
+        if(nombreArchivo.matches("D\\d{17}.(txt|TXT)")){
+            int consecutivo = Integer.parseInt(nombreArchivo.replaceAll("D\\d{13}(\\d{4}).*", "$1"));
+            Empresa empresa = eService.findEmpresaByLicencia(noLicencia);
+            if(empresa.getConsecutivo() == null || (empresa.getConsecutivo()!= null && empresa.getConsecutivo() <= consecutivo) ){
+                empresa.setConsecutivo(consecutivo+1);
+                em.merge(empresa);
+            }
+        }
+        
         String rutaDescarga = locator.getParameter("rutaDescarga");
         if(rutaDescarga == null){
             throw new ParametroException("No existe el parámetro rutaDescarga" );
@@ -66,124 +81,197 @@ public class DetraService {
         String linea = lector.readLine();
         
         while(linea != null){
-            if(linea.matches(".*PAGO\\s+PPI.*")){
-                Detraccion detracciones = new Detraccion();
-                String[] datos = linea.split(";");
-                String razonSocial = datos[25].replaceAll(".*/\\d(.*)-.*", "$1").replaceAll(",\\s*R\\s*U\\s*C", " ");
-                String ruc = datos[25].replaceAll(".*-(.*)", "$1").replaceAll("\\s+", "").replaceAll("-", "");
-                String importe = datos[32].replace(",", "").trim();
-                Proveedor proveedor = findProveedor(ruc);
-                if(proveedor == null){
-                    proveedor = new Proveedor();
-                    proveedor.setRazonSocial(razonSocial);
-                    proveedor.setRuc(ruc);
-                }
-                detracciones.setCodOperacion("X");
-                detracciones.setCodServicio("X");
-                detracciones.setFechaCarga(new Date());
-                detracciones.setProveedor(proveedor);
-                detracciones.setPeriodoTributario(periodo+"");
-                detracciones.setImporte(new BigDecimal(importe));
-                detracciones.setArchivoIn(nombreArchivo);
-                registros.add(detracciones);
-            }
+            String ruc = linea.replaceAll("(\\d{11})\\d{9}\\d{3}\\d{11}\\d{15}\\d{2}\\d{6}", "$1");
+            String cuenta = linea.replaceAll("\\d{11}\\d{9}\\d{3}(\\d{11})\\d{15}\\d{2}\\d{6}", "$1");
+            em.createNativeQuery("UPDATE proveedor SET no_cuenta_detraccion = '"+cuenta+"' WHERE ruc ='"+ruc+"'").executeUpdate();
             linea = lector.readLine();
         }
         lector.close();
         archivo.delete();
-        return registros;
-        
     }
 
-    public void guardarInfoBD(List<Detraccion> registros, Empresa adq, String nombreArchivo) {
-        Empresa adquiriente = (Empresa)em.find(Empresa.class, adq.getId());
-        List<Detraccion> anteriores = em.createNamedQuery("Detraccion.findDetraccion").setParameter("fecha", new Date()).setParameter("in", nombreArchivo).getResultList();
+    public List<Detraccion> cargarComprobantes(InputStream inputstream, String nombreArchivo)throws Exception{
+        List<Detraccion> detracciones = new ArrayList<Detraccion>();
+        String rutaDescarga = locator.getParameter("rutaDescarga");
+        if(rutaDescarga == null){
+            throw new ParametroException("No existe el parámetro rutaDescarga" );
+        }
+        String ruta = FilesUtils.crearArchivo(rutaDescarga, Utils.getNumAleatorio()+nombreArchivo , inputstream);
+        File archivo = new File(ruta);
+        RandomAccessFile lector = new RandomAccessFile(archivo, "rw");
+        
+        String linea = lector.readLine();
+        
+        String nombreDetraccion = "";
+        Date fechaPago = new Date();
+        
+        while(linea != null){
+            if(linea.matches("Archivo.*")){
+                nombreDetraccion = linea.replaceAll("Archivo.*(D.*[Tt][Xx][Tt]).*", "$1");
+            }
+            if(linea.matches("Fecha y hora de pago.*")){
+                fechaPago = formatFecha.parse(linea.replaceAll(".*(\\d{2})/(\\d{2})/(\\d{4}).*", "$3-$2-$1"));
+            }
+            
+            String ruc = null;
+            String monto = null;
+            String periodo = null;
+            String opr = null;
+            String servicio = null;
+            String comprobante = null;
+            
+            if(linea.matches("Numero de constancia.*")){
+                comprobante = linea.replaceAll("Numero de constancia.*(\\d+).*", "$1");
+            }
+            if(linea.matches("RUC Proveedor.*")){
+                ruc = linea.replaceAll("RUC Proveedor.*(\\d+).*", "$1");
+            }
+            if(linea.matches("Codigo operacion.*")){
+                opr = linea.replaceAll("Codigo operacion.*(\\d+).*", "$1");
+            }
+            if(linea.matches("Codigo bien o servicio.*")){
+                servicio = linea.replaceAll("Codigo bien o servicio.*(\\d+).*", "$1");
+            }
+            if(linea.matches("Monto deposito.*")){
+                monto = linea.replaceAll("Monto deposito.*(\\d+\\.\\d+).*", "$1");
+            }
+            if(linea.matches("Periodo Tributario.*")){
+                periodo = linea.replaceAll("Periodo Tributario.*(\\d+).*", "$1");
+                
+                List<Detraccion> concidencias = em.createNamedQuery("Detraccion.findForComprobante")
+                        .setParameter("servicio", servicio).setParameter("opr", opr)
+                        .setParameter("archivo", nombreDetraccion).setParameter("periodo", periodo)
+                        .setParameter("importe", new BigDecimal(monto)).setParameter("ruc", ruc).getResultList();
+                if(concidencias.isEmpty()){
+                    Detraccion detra = new Detraccion();
+                    detra.setPeriodoTributario(periodo);
+                    detra.setImporte(new BigDecimal(monto));
+                    detra.getProveedor().setRuc(ruc);
+                    detra.setCargadoComprobante(false);
+                    detracciones.add(detra);
+                }else{
+                    for(Detraccion detra: concidencias){
+                        if(detra.getComprobante() == null){
+                            detra.setCargadoComprobante(true);
+                            detra.setFechaPago(fechaPago);
+                            detra.setComprobante(comprobante);
+                            em.merge(detra);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            
+            
+            linea = lector.readLine();
+        }
+        lector.close();
+        archivo.delete();
+        return detracciones;
+    }
+
+    public String generarDetracciones(InputStream inputstream, String nombreEntrada, Empresa empresa)throws Exception{
+        Map codsServicioXNombre = gService.getMapServiciosXNombre();
+        
+        List<Detraccion> anteriores = em.createNamedQuery("Detraccion.findDetraccion").setParameter("fecha", new Date()).setParameter("in", nombreEntrada).getResultList();
         if(!anteriores.isEmpty()){
-            em.createNativeQuery("DELETE FROM detracciones WHERE fecha_carga = '"+formatFecha.format(new Date())+"' AND archivo_in = '"+nombreArchivo+"'").executeUpdate();
-            List<Detraccion> detraFecha = em.createNamedQuery("Detraccion.findDetFecha").setParameter("fecha", new Date()).getResultList();
-            if(detraFecha.isEmpty()){
-                adquiriente.setConsecutivo(adquiriente.getConsecutivo()-1);
-            }
+            em.createNativeQuery("DELETE FROM detracciones WHERE fecha_carga = '"+formatFecha.format(new Date())+"' AND archivo_in = '"+nombreEntrada+"'").executeUpdate();
         }
         
-        List<Detraccion> detraFecha = em.createNamedQuery("Detraccion.findDetFecha").setParameter("fecha", new Date()).getResultList();
-        if(detraFecha.isEmpty()){
-            adquiriente.setConsecutivo(adquiriente.getConsecutivo()+1);
-        }
-        
-        for(Detraccion registro:registros){
-            Proveedor pro1 = registro.getProveedor();
-            Proveedor provedor = findProveedor(registro.getProveedor().getRuc());
-            registro.setEmpresa(adquiriente);
-            if(provedor != null){
-                registro.setProveedor(provedor);
-            }
-            registro.setNoFactura(String.format("%09d", Integer.parseInt(registro.getNoFactura())) );
-            em.merge(registro);
-        }
-    }
-
-    public String generarArchivo(Date fecha)throws Exception{
-        List<Detraccion> detracciones = em.createNamedQuery("Detraccion.findDetFecha")
-                .setParameter("fecha", fecha).getResultList();
+        List<Detraccion> detracciones = new ArrayList<Detraccion>();
         String rutaDescarga = locator.getParameter("rutaDescarga");
         if(rutaDescarga == null){
             throw new ParametroException("No existe el parámetro rutaDescarga" );
         }
         
-        Empresa adq = null;
-        if(!detracciones.isEmpty()){
-            adq = detracciones.get(0).getEmpresa();
-        }else{
-            return null;
-        }
         String ano = (""+FechaUtils.getAnoActual()).substring(2);
-        String nombreArchivo = "D"+adq.getRuc()+ano+String.format("%04d",adq.getConsecutivo())+".txt";
-        String rutaArchivo = rutaDescarga+File.separator+nombreArchivo;
-        File archivo = new File(rutaArchivo);
-        if(archivo.exists()){
-            archivo.delete();
+        String nombreSalida = "D"+empresa.getRuc()+ano+String.format("%04d",empresa.getConsecutivo())+".txt";
+        String rutaSalida = rutaDescarga+File.separator+nombreSalida;
+        File archivoSalida = new File(rutaSalida);
+        if(archivoSalida.exists()){
+            archivoSalida.delete();
         }
-        RandomAccessFile escritor = new RandomAccessFile(rutaArchivo, "rw");
+        RandomAccessFile salida = new RandomAccessFile(rutaSalida, "rw");
         
+        
+        
+        
+        String rutaEntrada = FilesUtils.crearArchivo(rutaDescarga, Utils.getNumAleatorio()+nombreEntrada , inputstream);
+        File archivoEntrada = new File(rutaEntrada);
+        RandomAccessFile entrada = new RandomAccessFile(archivoEntrada, "rw");
+        
+        String linea = entrada.readLine();
         double valor = 0;
-        for(Detraccion detraccion : detracciones){
-            valor += detraccion.getImporte().doubleValue();
+        while(linea != null){
+            if(linea.matches("\\d{11};.*") && linea.split(";").length > 10){
+                Detraccion detraccion = new Detraccion();
+                String[] datos = linea.split(";");
+                String razonSocial = datos[1].trim();
+                String ruc = datos[0].trim();
+                String noFactura = datos[2].trim();
+                Date fechaEmision = formatFecha.parse(datos[3].replaceAll("(\\d{2})/(\\d{2})/(\\d{4})", "$3-$2-$1"));
+                BigDecimal base = new BigDecimal(datos[4].trim().replace(",","."));
+                Integer porcentaje = Integer.parseInt(datos[5].replace("%", "").trim());
+                BigDecimal importe = new BigDecimal(datos[6].trim().replace(",","."));
+                String periodo = datos[3].replaceAll("(\\d{2})/(\\d{2})/(\\d{4})", "$3$2");
+                String codOperacion = "01";
+                String codServicio = "001";
+                Proveedor proveedor = prService.findProveedorByRuc(ruc);
+                if(proveedor == null){
+                    proveedor = new Proveedor();
+                    proveedor.setRazonSocial(razonSocial);
+                    proveedor.setRuc(ruc);
+                    em.merge(proveedor);
+                }
+                detraccion.setCodOperacion(codOperacion);
+                detraccion.setCodServicio(codServicio);
+                detraccion.setFechaCarga(new Date());
+                detraccion.setProveedor(proveedor);
+                detraccion.setPeriodoTributario(periodo);
+                detraccion.setImporte(importe);
+                detraccion.setBase(base);
+                detraccion.setFechaEmision(fechaEmision);
+                detraccion.setPorcentaje(porcentaje);
+                detraccion.setNoFactura(noFactura);
+                detraccion.setArchivoIn(nombreEntrada);
+                detraccion.setArchivoOut(nombreSalida);
+                detraccion.setEmpresa(empresa);
+                
+                em.merge(detraccion);
+                
+                valor += detraccion.getImporte().doubleValue();
+                detracciones.add(detraccion);
+                
+                pService.asociarDetraccionPago(detraccion);
+            }
+            linea = entrada.readLine();
         }
         String svalor = ""+valor;
         String[] partes = svalor.split("[,\\.]");
-        
-        
-        
-        String reg1 = "*"+adq.getRuc()+Utils.rellenarDerecha(adq.getNombre(), " ", 35)+ano+String.format("%04d",adq.getConsecutivo())+String.format("%013d",Long.parseLong(partes[0]))+Utils.rellenarDerecha(partes[1], "0",2);
-        
-        escritor.writeBytes(reg1+"\n");
-        
-        
+        String reg1 = "*"+empresa.getRuc()+Utils.rellenarDerecha(empresa.getNombre(), " ", 35)+ano+String.format("%04d",empresa.getConsecutivo())+String.format("%013d",Long.parseLong(partes[0]))+Utils.rellenarDerecha(partes[1], "0",2);
+        salida.writeBytes(reg1+"\r\n");
         int i = 1;
         for(Detraccion detraccion : detracciones){
-            
             svalor = ""+detraccion.getImporte().doubleValue();
             partes = svalor.split("[,\\.]");
             String importe = String.format("%013d",Long.parseLong(partes[0]))+Utils.rellenarDerecha(partes[1], "0", 2);
-            
             String reg2 = detraccion.getProveedor().getRuc()+detraccion.getNoFactura()+detraccion.getCodServicio()
                     +detraccion.getProveedor().getNoCuentaDetraccion()+importe+detraccion.getCodOperacion()+detraccion.getPeriodoTributario();
-            
             if(i == detracciones.size()){
-                escritor.writeBytes(reg2);
+                salida.writeBytes(reg2);
             }else{
-                escritor.writeBytes(reg2+"\n");
+                salida.writeBytes(reg2+"\r\n");
             }
             i++;
             
-            detraccion.setArchivoOut(rutaArchivo.replaceAll(".*/(.*)", "$1"));
+            detraccion.setArchivoOut(nombreSalida);
             em.merge(detraccion);
         }
-        
-        escritor.close();
-        
-        return rutaArchivo;
+        salida.close();
+        entrada.close();
+        archivoEntrada.delete();
+        return rutaSalida;
     }
 
 }

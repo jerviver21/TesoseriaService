@@ -6,10 +6,12 @@
 
 package com.paideia.tesoreria.services;
 
+import com.paideia.tesoreria.dominio.ConceptoPago;
 import com.paideia.tesoreria.dominio.Empresa;
 import com.paideia.tesoreria.dominio.EstadoPago;
 import com.paideia.tesoreria.dominio.Notificacion;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
@@ -47,6 +49,11 @@ public class GeneralService {
         }
         return msj.get(0);
         
+    }
+
+    public Map getMapServiciosXNombre() {
+        List<ConceptoPago> conceptos = em.createNamedQuery("").getResultList();
+        return null;
     }
 
 }

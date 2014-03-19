@@ -80,16 +80,27 @@
             <Attribute datatype="date" defaultvalue="" extra="" fraction="null" id="3c5aa419-2941-43e3-8f25-c0f5559768ed" name="fecha_pago" nullable="true" scale="10" size=""/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="d7598abd-6cb3-4e29-81f3-6a7f0e7e3bca" name="archivo_in" nullable="true" scale="10" size="255"/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="fb79a108-ca86-42bf-8107-ba4d0477e41e" name="archivo_out" nullable="true" scale="10" size="255"/>
+            <Attribute datatype="date" defaultvalue="" extra="" fraction="null" id="dcf41389-50bd-406b-a297-fe97c9474279" name="fecha_emision" nullable="true" scale="10" size=""/>
+            <Attribute datatype="numeric" defaultvalue="" extra="" fraction="2" id="e65d07bc-78a9-4e42-b838-7d98a713d894" name="base_imponible" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="09b90cf2-f927-476e-9e5d-24cce6bd4c0d" name="porcentaje" nullable="true" scale="10" size=""/>
+            <Attribute datatype="numeric" defaultvalue="" extra="" fraction="2" id="4f8ed869-a899-4ce8-8d32-d21b67c630b0" name="monto_total" nullable="true" scale="10" size="10"/>
             <Index id="b095df1e-7026-4e3f-81a2-407419f83ddc" indextype="PRIMARYKEY" name="detracciones_pk">
                 <Indexattribute attributerefid="eb43ae17-61fb-41bf-ab76-85eaa1c1d5dd" id="877c47b4-6dd2-4671-a62f-4970b2f7ada9"/>
             </Index>
         </Table>
         <Table id="d4085da0-79bd-4705-b75a-fefd9d97af5d" name="empresa" schema="">
-            <Property name="LOCATION" value="931:0"/>
+            <Property name="LOCATION" value="924:0"/>
             <Attribute datatype="bigserial" defaultvalue="" extra="" fraction="null" id="4bb55603-2749-4562-9e9b-85ae57d6e4fb" name="id" nullable="false" scale="10" size=""/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="114fc314-6223-48d5-9516-be8a904c46b9" name="ruc" nullable="true" scale="10" size="50"/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="b55090b4-399b-47cd-aca4-b4658af8cdb7" name="nombre" nullable="true" scale="10" size="500"/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="8030e7e0-744d-4006-92bf-b292f6cd279c" name="no_licencia" nullable="true" scale="10" size="500"/>
+            <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="6aba654a-38e3-4749-be5c-c4a85dff762f" name="consecutivo" nullable="true" scale="10" size="">
+                <Comment>Para detracciones.</Comment>
+            </Attribute>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="7507ceac-e6ff-45c2-8de9-d23ecf5fec38" name="telefono_celular" nullable="true" scale="10" size="500"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="2c24723b-0461-4b23-96c9-2c91f1e66627" name="persona_contacto" nullable="true" scale="10" size="500"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="4a076c81-7a94-4e7f-8804-83c2a051f5b2" name="telefono_fijo" nullable="true" scale="10" size="500"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="06d93d61-65f6-41db-acc7-0d60c1df00ea" name="email" nullable="true" scale="10" size="500"/>
             <Index id="2f0a92f9-b88b-4d1b-b43b-df5796b25334" indextype="PRIMARYKEY" name="adquiriente_pk">
                 <Indexattribute attributerefid="4bb55603-2749-4562-9e9b-85ae57d6e4fb" id="59c8eef4-7a9e-4dc1-84db-49e571b86fd0"/>
             </Index>
@@ -98,7 +109,7 @@
             </Index>
         </Table>
         <Table id="193a006f-ffdc-4f6f-a11e-d70107a07d91" name="estado_pago" schema="">
-            <Property name="LOCATION" value="841:312"/>
+            <Property name="LOCATION" value="848:347"/>
             <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="a8414d10-79d5-4499-b367-7ff266007506" name="id" nullable="false" scale="10" size=""/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="14e5e818-3e1a-4f5f-a655-5dc9edd473ab" name="nombre" nullable="false" scale="10" size="255"/>
             <Index id="6c92e9f8-a656-4dfc-94cc-71705c9d82e1" indextype="PRIMARYKEY" name="estado_pago_pk">
@@ -133,7 +144,7 @@
             </Index>
         </Table>
         <Table id="b16ee9e9-2219-4274-a0aa-5690def9581a" name="cuentas_empresa" schema="">
-            <Property name="LOCATION" value="896:208"/>
+            <Property name="LOCATION" value="883:231"/>
             <Attribute datatype="serial" defaultvalue="" extra="" fraction="null" id="a872535f-b8ee-4d8c-872a-47dd25802d2e" name="id" nullable="false" scale="10" size=""/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="28abd64c-66ed-45cd-b530-284064b5e544" name="no_cuenta" nullable="false" scale="10" size="255"/>
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="0cff10ce-1628-4f14-8c6b-7e572faabb58" name="moneda" nullable="false" scale="10" size="255"/>
