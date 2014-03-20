@@ -19,8 +19,10 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
@@ -81,9 +83,12 @@ public class DetraService {
         String linea = lector.readLine();
         
         while(linea != null){
-            String ruc = linea.replaceAll("(\\d{11})\\d{9}\\d{3}\\d{11}\\d{15}\\d{2}\\d{6}", "$1");
-            String cuenta = linea.replaceAll("\\d{11}\\d{9}\\d{3}(\\d{11})\\d{15}\\d{2}\\d{6}", "$1");
-            em.createNativeQuery("UPDATE proveedor SET no_cuenta_detraccion = '"+cuenta+"' WHERE ruc ='"+ruc+"'").executeUpdate();
+            if(linea.matches("\\d{11}\\d{9}\\d{3}\\d{11}\\d{15}\\d{2}\\d{6}")){
+                String ruc = linea.replaceAll("(\\d{11})\\d{9}\\d{3}\\d{11}\\d{15}\\d{2}\\d{6}", "$1");
+                String cuenta = linea.replaceAll("\\d{11}\\d{9}\\d{3}(\\d{11})\\d{15}\\d{2}\\d{6}", "$1");
+                em.createNativeQuery("UPDATE proveedor SET no_cuenta_detraccion = '"+cuenta+"' WHERE ruc ='"+ruc+"'").executeUpdate(); 
+            }
+            
             linea = lector.readLine();
         }
         lector.close();
@@ -105,7 +110,15 @@ public class DetraService {
         String nombreDetraccion = "";
         Date fechaPago = new Date();
         
+        String ruc = null;
+        String monto = null;
+        String periodo = null;
+        String opr = null;
+        String servicio = null;
+        String comprobante = null;
+        
         while(linea != null){
+            System.out.println(linea);
             if(linea.matches("Archivo.*")){
                 nombreDetraccion = linea.replaceAll("Archivo.*(D.*[Tt][Xx][Tt]).*", "$1");
             }
@@ -113,35 +126,32 @@ public class DetraService {
                 fechaPago = formatFecha.parse(linea.replaceAll(".*(\\d{2})/(\\d{2})/(\\d{4}).*", "$3-$2-$1"));
             }
             
-            String ruc = null;
-            String monto = null;
-            String periodo = null;
-            String opr = null;
-            String servicio = null;
-            String comprobante = null;
             
-            if(linea.matches("Numero de constancia.*")){
-                comprobante = linea.replaceAll("Numero de constancia.*(\\d+).*", "$1");
+            
+            
+            if(linea.matches(".*Numero de constancia.*")){
+                comprobante = linea.replaceAll(".*Numero de constancia.*(\\d+).*", "$1");
             }
-            if(linea.matches("RUC Proveedor.*")){
-                ruc = linea.replaceAll("RUC Proveedor.*(\\d+).*", "$1");
+            if(linea.matches(".*RUC Proveedor.*")){
+                ruc = linea.replaceAll(".*RUC Proveedor.*?(\\d+).*", "$1");
             }
-            if(linea.matches("Codigo operacion.*")){
-                opr = linea.replaceAll("Codigo operacion.*(\\d+).*", "$1");
+            if(linea.matches(".*Codigo operacion.*")){
+                opr = linea.replaceAll(".*Codigo operacion.*?(\\d+).*", "$1");
             }
-            if(linea.matches("Codigo bien o servicio.*")){
-                servicio = linea.replaceAll("Codigo bien o servicio.*(\\d+).*", "$1");
+            if(linea.matches(".*Codigo bien o servicio.*")){
+                servicio = linea.replaceAll(".*Codigo bien o servicio.*?(\\d+).*", "$1");
             }
-            if(linea.matches("Monto deposito.*")){
-                monto = linea.replaceAll("Monto deposito.*(\\d+\\.\\d+).*", "$1");
+            if(linea.matches(".*Monto deposito.*")){
+                monto = linea.replaceAll(".*Monto deposito.*?(\\d+\\.\\d+).*", "$1");
             }
             if(linea.matches("Periodo Tributario.*")){
-                periodo = linea.replaceAll("Periodo Tributario.*(\\d+).*", "$1");
+                periodo = linea.replaceAll("Periodo Tributario.*?(\\d+).*", "$1");
                 
+                System.out.println(servicio+" - "+opr+" - "+nombreDetraccion+" - "+periodo+" - "+monto+" - "+ruc+" - "+comprobante);
                 List<Detraccion> concidencias = em.createNamedQuery("Detraccion.findForComprobante")
                         .setParameter("servicio", servicio).setParameter("opr", opr)
                         .setParameter("archivo", nombreDetraccion).setParameter("periodo", periodo)
-                        .setParameter("importe", new BigDecimal(monto)).setParameter("ruc", ruc).getResultList();
+                        .setParameter("importe", new BigDecimal(monto.trim())).setParameter("ruc", ruc).getResultList();
                 if(concidencias.isEmpty()){
                     Detraccion detra = new Detraccion();
                     detra.setPeriodoTributario(periodo);
@@ -160,6 +170,13 @@ public class DetraService {
                         }
                     }
                 }
+                
+                ruc = null;
+                monto = null;
+                periodo = null;
+                opr = null;
+                servicio = null;
+                comprobante = null;
             }
             
             
@@ -172,11 +189,11 @@ public class DetraService {
     }
 
     public String generarDetracciones(InputStream inputstream, String nombreEntrada, Empresa empresa)throws Exception{
-        Map codsServicioXNombre = gService.getMapServiciosXNombre();
+        Map<String, String> codsServicioXNombre = gService.getMapServiciosXNombre();
         
         List<Detraccion> anteriores = em.createNamedQuery("Detraccion.findDetraccion").setParameter("fecha", new Date()).setParameter("in", nombreEntrada).getResultList();
         if(!anteriores.isEmpty()){
-            em.createNativeQuery("DELETE FROM detracciones WHERE fecha_carga = '"+formatFecha.format(new Date())+"' AND archivo_in = '"+nombreEntrada+"'").executeUpdate();
+            em.createNativeQuery("DELETE FROM detraccion WHERE fecha_carga = '"+formatFecha.format(new Date())+"' AND archivo_in = '"+nombreEntrada+"'").executeUpdate();
         }
         
         List<Detraccion> detracciones = new ArrayList<Detraccion>();
@@ -203,6 +220,7 @@ public class DetraService {
         
         String linea = entrada.readLine();
         double valor = 0;
+        Set<String> serviciosNoGuardados = new HashSet();
         while(linea != null){
             if(linea.matches("\\d{11};.*") && linea.split(";").length > 10){
                 Detraccion detraccion = new Detraccion();
@@ -211,18 +229,38 @@ public class DetraService {
                 String ruc = datos[0].trim();
                 String noFactura = datos[2].trim();
                 Date fechaEmision = formatFecha.parse(datos[3].replaceAll("(\\d{2})/(\\d{2})/(\\d{4})", "$3-$2-$1"));
-                BigDecimal base = new BigDecimal(datos[4].trim().replace(",","."));
+
+                String bases = "";
+                String importes = "";
+                
+                if(datos[4].trim().matches(".*,\\d\\d$")){
+                    bases = datos[4].trim().replace(".", "").replace(",",".");
+                    importes = datos[6].trim().replace(".", "").replace(",",".");
+                }else{
+                    bases = datos[4].trim().replace(",", "");
+                    importes = datos[6].trim().replace(",", "");
+                }
+                
+                
+                BigDecimal base = new BigDecimal(bases);
                 Integer porcentaje = Integer.parseInt(datos[5].replace("%", "").trim());
-                BigDecimal importe = new BigDecimal(datos[6].trim().replace(",","."));
+                BigDecimal importe = new BigDecimal(importes);
+                
+                
                 String periodo = datos[3].replaceAll("(\\d{2})/(\\d{2})/(\\d{4})", "$3$2");
                 String codOperacion = "01";
-                String codServicio = "001";
+                String codServicio = datos[9].trim().matches("\\d{3}")?datos[9].trim():codsServicioXNombre.get(datos[9].trim().toUpperCase());
+                if(codServicio == null){
+                    codServicio = "999";
+                    serviciosNoGuardados.add(datos[9].trim());
+                }
+                
                 Proveedor proveedor = prService.findProveedorByRuc(ruc);
                 if(proveedor == null){
                     proveedor = new Proveedor();
                     proveedor.setRazonSocial(razonSocial);
                     proveedor.setRuc(ruc);
-                    em.merge(proveedor);
+                    proveedor = em.merge(proveedor);
                 }
                 detraccion.setCodOperacion(codOperacion);
                 detraccion.setCodServicio(codServicio);
@@ -237,8 +275,9 @@ public class DetraService {
                 detraccion.setArchivoIn(nombreEntrada);
                 detraccion.setArchivoOut(nombreSalida);
                 detraccion.setEmpresa(empresa);
+                detraccion.setNombreServicio(datos[9].trim());
                 
-                em.merge(detraccion);
+                detraccion = em.merge(detraccion);
                 
                 valor += detraccion.getImporte().doubleValue();
                 detracciones.add(detraccion);
@@ -256,8 +295,10 @@ public class DetraService {
             svalor = ""+detraccion.getImporte().doubleValue();
             partes = svalor.split("[,\\.]");
             String importe = String.format("%013d",Long.parseLong(partes[0]))+Utils.rellenarDerecha(partes[1], "0", 2);
-            String reg2 = detraccion.getProveedor().getRuc()+detraccion.getNoFactura()+detraccion.getCodServicio()
-                    +detraccion.getProveedor().getNoCuentaDetraccion()+importe+detraccion.getCodOperacion()+detraccion.getPeriodoTributario();
+            String reg2 = detraccion.getProveedor().getRuc()+String.format("%09d", 0)+detraccion.getCodServicio()
+                    +(detraccion.getProveedor().getNoCuentaDetraccion()==null?
+                    "99999999999":detraccion.getProveedor().getNoCuentaDetraccion())+
+                    importe+detraccion.getCodOperacion()+detraccion.getPeriodoTributario();
             if(i == detracciones.size()){
                 salida.writeBytes(reg2);
             }else{
@@ -271,6 +312,18 @@ public class DetraService {
         salida.close();
         entrada.close();
         archivoEntrada.delete();
+        
+        if(!serviciosNoGuardados.isEmpty()){
+            StringBuilder servs = new StringBuilder();
+            servs.append("Antes de generar el archivo, cargue los códigos de los siguientes servicios  (En el Menú: Detracciones - Cargar Servicio): \n");
+            for(String dato: serviciosNoGuardados){
+                servs.append(dato);
+                servs.append(";  \n");
+            }
+            throw new Exception(servs.toString());
+        }
+        
+        
         return rutaSalida;
     }
 

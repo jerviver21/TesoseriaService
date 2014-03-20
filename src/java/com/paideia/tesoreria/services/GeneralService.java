@@ -6,10 +6,10 @@
 
 package com.paideia.tesoreria.services;
 
-import com.paideia.tesoreria.dominio.ConceptoPago;
-import com.paideia.tesoreria.dominio.Empresa;
 import com.paideia.tesoreria.dominio.EstadoPago;
 import com.paideia.tesoreria.dominio.Notificacion;
+import com.paideia.tesoreria.dominio.Servicios;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -52,8 +52,19 @@ public class GeneralService {
     }
 
     public Map getMapServiciosXNombre() {
-        List<ConceptoPago> conceptos = em.createNamedQuery("").getResultList();
-        return null;
+        Map<String, String> mapa = new HashMap();
+        List<Servicios> servicios = em.createNamedQuery("Servicios.findAll").getResultList();
+        for(Servicios servicio: servicios){
+            mapa.put(servicio.getNombre(), servicio.getCodigo());
+        }
+        return mapa;
+    }
+
+    public void cargarServicio(String codigo, String descripcion) {
+        Servicios servicio = new Servicios();
+        servicio.setCodigo(codigo.trim());
+        servicio.setNombre(descripcion.trim().toUpperCase());
+        em.merge(servicio);
     }
 
 }

@@ -35,6 +35,7 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "Detraccion.findAll", query = "SELECT d FROM Detraccion d"),
     @NamedQuery(name = "Detraccion.findByFact", query = "SELECT d FROM Detraccion d WHERE d.noFactura =:no"),
+    @NamedQuery(name = "Detraccion.findDetraccion", query = "SELECT d FROM Detraccion d WHERE d.fechaCarga =:fecha AND d.archivoIn =:in"),
     @NamedQuery(name = "Detraccion.findForComprobante", query = "SELECT d FROM Detraccion d "
             + "WHERE d.archivoOut =:archivo AND d.codServicio =:servicio AND d.codOperacion =:opr AND "
             + "d.periodoTributario =:periodo AND d.proveedor.ruc =:ruc AND d.importe =:importe ")
@@ -72,6 +73,9 @@ public class Detraccion implements Serializable {
     private BigDecimal montoTotal;
     @Column(name = "porcentaje")
     private Integer porcentaje;
+    
+    @Column(name = "nombre_servicio")
+    private String nombreServicio;
     
     
     
@@ -306,6 +310,20 @@ public class Detraccion implements Serializable {
      */
     public void setPorcentaje(Integer porcentaje) {
         this.porcentaje = porcentaje;
+    }
+
+    /**
+     * @return the nombreServicio
+     */
+    public String getNombreServicio() {
+        return nombreServicio;
+    }
+
+    /**
+     * @param nombreServicio the nombreServicio to set
+     */
+    public void setNombreServicio(String nombreServicio) {
+        this.nombreServicio = nombreServicio;
     }
     
 }

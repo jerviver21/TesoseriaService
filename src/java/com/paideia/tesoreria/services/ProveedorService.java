@@ -6,7 +6,6 @@
 
 package com.paideia.tesoreria.services;
 
-import com.paideia.tesoreria.dominio.CuentasEmpresa;
 import com.paideia.tesoreria.dominio.CuentasProveedor;
 import com.paideia.tesoreria.dominio.Proveedor;
 import java.util.List;
@@ -52,6 +51,16 @@ public class ProveedorService {
 
     public void borrarCuenta(CuentasProveedor cb) {
         em.remove(em.merge(cb));
+    }
+
+    public void guardarCuentaDetraccion(String ruc, String cuentaDetra) {
+        int num = em.createNativeQuery("UPDATE proveedor SET no_cuenta_detraccion = '"+cuentaDetra+"' WHERE ruc = '"+ruc+"'").executeUpdate();
+        if(num == 0){
+            Proveedor provedor = new Proveedor();
+            provedor.setRuc(ruc);
+            provedor.setNoCuentaDetraccion(cuentaDetra);
+            em.merge(provedor);
+        }
     }
 
 }

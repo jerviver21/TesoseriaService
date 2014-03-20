@@ -84,6 +84,7 @@
             <Attribute datatype="numeric" defaultvalue="" extra="" fraction="2" id="e65d07bc-78a9-4e42-b838-7d98a713d894" name="base_imponible" nullable="true" scale="10" size="10"/>
             <Attribute datatype="int4" defaultvalue="" extra="" fraction="null" id="09b90cf2-f927-476e-9e5d-24cce6bd4c0d" name="porcentaje" nullable="true" scale="10" size=""/>
             <Attribute datatype="numeric" defaultvalue="" extra="" fraction="2" id="4f8ed869-a899-4ce8-8d32-d21b67c630b0" name="monto_total" nullable="true" scale="10" size="10"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="b2b3a763-c465-401c-9f15-ed84626238a5" name="nombre_servicio" nullable="true" scale="10" size="1500"/>
             <Index id="b095df1e-7026-4e3f-81a2-407419f83ddc" indextype="PRIMARYKEY" name="detracciones_pk">
                 <Indexattribute attributerefid="eb43ae17-61fb-41bf-ab76-85eaa1c1d5dd" id="877c47b4-6dd2-4671-a62f-4970b2f7ada9"/>
             </Index>
@@ -190,6 +191,18 @@
             <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="289f0b57-77e2-4c60-a8d5-eb58a5763517" name="tipo" nullable="true" scale="10" size="255"/>
             <Index id="32bd0fcf-75cc-4461-b91a-a126d963ef8e" indextype="PRIMARYKEY" name="notificacion_pk">
                 <Indexattribute attributerefid="e2c76129-d57c-49ce-bde6-dc97d2a1f84b" id="4e49a1be-7072-45c6-b605-8c076e5d042c"/>
+            </Index>
+        </Table>
+        <Table id="d028fb72-6872-4e98-8e49-748ed76d331f" name="servicios" schema="">
+            <Property name="LOCATION" value="1940:802"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="516840eb-5ca6-4a2f-8a5f-c54cb33210cb" name="codigo" nullable="false" scale="10" size="3"/>
+            <Attribute datatype="varchar" defaultvalue="" extra="" fraction="null" id="349ec879-ea74-4164-a7fb-c3aac13bcf18" name="nombre" nullable="false" scale="10" size="1500"/>
+            <Attribute datatype="bigserial" defaultvalue="" extra="" fraction="null" id="181f3279-4c19-4ecc-9ffb-4c4a34dafbd9" name="id" nullable="false" scale="10" size=""/>
+            <Index id="10b34f7c-4fc8-4d75-ab94-17fba39a0897" indextype="PRIMARYKEY" name="servicios1_pk">
+                <Indexattribute attributerefid="181f3279-4c19-4ecc-9ffb-4c4a34dafbd9" id="3081ecf3-5fdd-4e1a-8738-446074699268"/>
+            </Index>
+            <Index id="2458bd8d-a62f-4d32-99e8-11b12b2847d1" indextype="UNIQUE" name="servicios_ui1">
+                <Indexattribute attributerefid="349ec879-ea74-4164-a7fb-c3aac13bcf18" id="70e321f8-9c44-4164-8ad6-4c43f7b3875a"/>
             </Index>
         </Table>
     </Tables>
