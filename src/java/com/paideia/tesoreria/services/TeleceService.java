@@ -268,6 +268,7 @@ public class TeleceService {
                     registro.setEstado(estado);
                     registro.setObservacion(datosreg[12].trim());
                     registro.setCargado(findRegistro(noPlanilla, registro.getFechaPago(), registro.getConsecutivo())!=null);
+                    registro.setNombreArchivo(nombreArchivo);
                     to.getPagos().add(registro);
                 }
                 if(datosreg.length == 5 && registro != null && datosreg[2].trim().matches("\\d+")){

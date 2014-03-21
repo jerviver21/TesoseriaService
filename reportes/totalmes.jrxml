@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="totalmes" pageWidth="1800" pageHeight="842" columnWidth="1760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9cd64cda-c393-403e-bf1c-ed471af02389">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="858"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="fecha_ini" class="java.lang.String"/>
 	<parameter name="fecha_fin" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select * from registro_pagos where fecha >= to_date($P{fecha_ini},'yyyy-MM-dd') and fecha <= to_date($P{fecha_fin},'yyyy-MM-dd');]]>
+		<![CDATA[select r.tipo_operacion, r.subtipo_operacion, r.no_planilla, r.fecha_pago as fecha, r.rp, r.mon_org as mon_origen, c.no_cuenta as cuenta_origen, r.consecutivo, r.nombre, p.ruc as num_id, r.monto, r.monto_abonado, r.otra_informacion as otro, r.mon_des as mon_cuenta, r.desc_destino as no_cuenta, e.nombre as estado, r.observacion, r.no_factura from registro_pago r, proveedor p, cuentas_empresa c, estado_pago e where r.id_proveedor=p.id AND c.id = r.id_cuenta_origen AND e.id = r.id_estado AND fecha_pago >= to_date($P{fecha_ini},'yyyy-MM-dd') and fecha_pago <= to_date($P{fecha_fin},'yyyy-MM-dd');]]>
 	</queryString>
-	<field name="id" class="java.lang.Long"/>
 	<field name="tipo_operacion" class="java.lang.String"/>
 	<field name="subtipo_operacion" class="java.lang.String"/>
 	<field name="no_planilla" class="java.lang.String"/>
 	<field name="fecha" class="java.sql.Date"/>
 	<field name="rp" class="java.lang.String"/>
+	<field name="mon_origen" class="java.lang.String"/>
 	<field name="cuenta_origen" class="java.lang.String"/>
 	<field name="consecutivo" class="java.lang.Integer"/>
 	<field name="nombre" class="java.lang.String"/>
 	<field name="num_id" class="java.lang.String"/>
 	<field name="monto" class="java.math.BigDecimal"/>
 	<field name="monto_abonado" class="java.math.BigDecimal"/>
+	<field name="otro" class="java.lang.String"/>
+	<field name="mon_cuenta" class="java.lang.String"/>
 	<field name="no_cuenta" class="java.lang.String"/>
 	<field name="estado" class="java.lang.String"/>
 	<field name="observacion" class="java.lang.String"/>
-	<field name="mon_origen" class="java.lang.String"/>
-	<field name="otro" class="java.lang.String"/>
-	<field name="mon_cuenta" class="java.lang.String"/>
 	<field name="no_factura" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>

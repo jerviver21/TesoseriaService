@@ -8,6 +8,7 @@ package com.paideia.tesoreria.services;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.paideia.tesoreria.dominio.AcuerdoPago;
 import com.paideia.tesoreria.dominio.Empresa;
 import com.paideia.tesoreria.dominio.RegistroFactura;
 import com.paideia.tesoreria.dominio.RegistroPago;
@@ -45,6 +46,9 @@ public class FacturaService {
     @EJB
     EmpresaService eService;
     
+    @EJB
+    TeleceService tService;
+    
     ParameterLocator locator;
     
     public FacturaService(){
@@ -59,6 +63,13 @@ public class FacturaService {
         factura.setSerieFactura(Integer.parseInt(factura.getSerieNoFactura().split("-")[0]));
         factura.setNumFactura(Long.parseLong(factura.getSerieNoFactura().split("-")[1]));
         
+        String noFact = String.format("%015d", factura.getNumFactura());
+        List<RegistroPago> pago = tService.findPagosByFact(noFact);
+        if(!pago.isEmpty()){
+            factura.setRegistroPago(pago.get(0));
+        }
+        
+        factura.setAcuerdoPago(em.find(AcuerdoPago.class, factura.getAcuerdoPago().getId()));
         
         if(factura.getAcuerdoPago().getId()<= 3){
             factura.setFechaVencimiento(FechaUtils.getFechaMasPeriodo(factura.getFechaEmisionFact(), 

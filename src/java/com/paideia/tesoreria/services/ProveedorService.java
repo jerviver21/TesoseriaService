@@ -40,6 +40,10 @@ public class ProveedorService {
         return cuenta.get(0);
     }
     
+    public void edit(Proveedor proveedor){
+        em.merge(proveedor);
+    }
+    
     public Proveedor saveProveedor(Proveedor proveedor){
         proveedor.setInfoActualizada(Boolean.TRUE);
         return  em.merge(proveedor);

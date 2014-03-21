@@ -62,8 +62,8 @@ public class EmpresaService {
         return cuenta.get(0);
     }
     
-    public Empresa saveEmpresa(Empresa proveedor){
-        return em.merge(proveedor);
+    public Empresa saveEmpresa(Empresa empresa){
+        return em.merge(empresa);
     }
     
     public CuentasEmpresa saveCuenta(CuentasEmpresa cuenta){

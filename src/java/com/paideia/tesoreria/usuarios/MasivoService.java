@@ -6,7 +6,12 @@
 
 package com.paideia.tesoreria.usuarios;
 
+import com.paideia.tesoreria.dominio.Proveedor;
+import com.paideia.tesoreria.services.ProveedorService;
+import com.paideia.tesoreria.to.MasivoTO;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
 import com.vi.comun.exceptions.ParametroException;
+import com.vi.comun.exceptions.ValidacionException;
 import com.vi.comun.locator.ParameterLocator;
 import com.vi.comun.util.FilesUtils;
 import com.vi.comun.util.Utils;
@@ -50,6 +55,9 @@ public class MasivoService {
     @EJB
     GruposServicesLocal gService;
     
+    @EJB
+    ProveedorService pService;
+    
     ParameterLocator locator;
     
     public MasivoService(){
@@ -57,20 +65,28 @@ public class MasivoService {
     }
     
     
-    public String generaUsuarios(InputStream input, String nombreArchivo, Licencia licencia, PasswordEncoder encoder)throws Exception{
+    public MasivoTO generaUsuarios(InputStream input, String nombreArchivo, Licencia licencia, PasswordEncoder encoder)throws ValidacionException, LlaveDuplicadaException, Exception{
+        MasivoTO dto = new MasivoTO();
         String rutaDescarga = locator.getParameter("rutaDescarga");
         if(rutaDescarga == null){
             throw new ParametroException("No existe el parámetro rutaDescarga" );
         }
         String rutaSalida = rutaDescarga+File.separator+Utils.getNumAleatorio()+"CLAVES.CSV";
+        dto.setRuta(rutaSalida);
         RandomAccessFile claves = new RandomAccessFile(rutaSalida, "rw");
         claves.writeBytes("Nombre de Usuario;Contraseña\r\n");
         String ruta = FilesUtils.crearArchivo(rutaDescarga, Utils.getNumAleatorio()+nombreArchivo , input);
         File archivo = new File(ruta);
         BufferedReader lector = new BufferedReader(new FileReader(ruta));
         String ruc = lector.readLine();
+        int i = 1;
         while(ruc != null){
-            if(ruc.matches("\\d+")){
+            if(ruc.matches("(\\d{3,11}|^\\s*$)")){
+                if(ruc.matches("^\\s*$")){
+                    i++;
+                    ruc = lector.readLine();
+                    continue;
+                }
                 String claveAleatoria = "AF"+String.format("%06d", Utils.getNumAleatorio() );
                 Groups grupo = gService.findByCodigo("PROVEEDORES");
                 List<Groups> grupos = new ArrayList<Groups>();
@@ -81,15 +97,25 @@ public class MasivoService {
                 usr.setUsr(ruc);
                 usr.setEstado(1);
                 usr.setPwd(encoder.encodePassword(claveAleatoria, null));
+                
+                Proveedor proveedor = pService.findProveedorByRuc(ruc);
+                if(proveedor !=  null){
+                    proveedor.setInfoActualizada(Boolean.FALSE);
+                }
+                
                 uService.create(usr);
                 claves.writeBytes(usr.getUsr()+";"+claveAleatoria+"\r\n");
+                dto.setNumUsuariosCargados(dto.getNumUsuariosCargados()+1);
+            }else{
+                throw new ValidacionException("El RUC o numero de identificación no puede tener más de 11 digitos, línea: "+i+" - RUC: "+ruc);
             }
+            i++;
             ruc = lector.readLine();
         }
         claves.close();
         lector.close();
         archivo.delete();
         
-        return rutaSalida;
+        return dto;
     }
 }

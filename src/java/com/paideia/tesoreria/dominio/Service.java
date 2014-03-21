@@ -7,17 +7,15 @@
 package com.paideia.tesoreria.dominio;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -25,34 +23,30 @@ import javax.validation.constraints.Size;
  * @author jerviver21
  */
 @Entity
-@Table(name = "acuerdo_pago")
+@Table(name = "service")
 @NamedQueries({
-    @NamedQuery(name = "AcuerdoPago.findAll", query = "SELECT a FROM AcuerdoPago a")})
-public class AcuerdoPago implements Serializable {
+    @NamedQuery(name = "Service.findAll", query = "SELECT s FROM Service s"),
+    @NamedQuery(name = "Service.findByNombre", query = "SELECT s FROM Service s WHERE s.descripcion =:nombre")
+})
+public class Service implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "nombre")
-    private String nombre;
-    @Column(name = "num_dias")
-    private Integer numDias;
+    @Size(max = 3)
+    @Column(name = "cod")
+    private String cod;
+    @Size(max = 255)
+    @Column(name = "descripcion")
+    private String descripcion;
 
-    public AcuerdoPago() {
+    public Service() {
     }
 
-    public AcuerdoPago(Integer id) {
+    public Service(Integer id) {
         this.id = id;
-    }
-
-    public AcuerdoPago(Integer id, String nombre) {
-        this.id = id;
-        this.nombre = nombre;
     }
 
     public Integer getId() {
@@ -63,20 +57,20 @@ public class AcuerdoPago implements Serializable {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getCod() {
+        return cod;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setCod(String cod) {
+        this.cod = cod;
     }
 
-    public Integer getNumDias() {
-        return numDias;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setNumDias(Integer numDias) {
-        this.numDias = numDias;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     @Override
@@ -89,10 +83,10 @@ public class AcuerdoPago implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof AcuerdoPago)) {
+        if (!(object instanceof Service)) {
             return false;
         }
-        AcuerdoPago other = (AcuerdoPago) object;
+        Service other = (Service) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -101,7 +95,7 @@ public class AcuerdoPago implements Serializable {
 
     @Override
     public String toString() {
-        return id+" - "+nombre;
+        return descripcion;
     }
     
 }

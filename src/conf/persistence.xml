@@ -3,6 +3,8 @@
   <persistence-unit name="TesoseriaServicePU" transaction-type="JTA">
     <jta-data-source>java:/jboss/datasources/PostgreSQLDS3</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
-    <properties/>
+    <properties>
+      <!--<property name = "hibernate.show_sql" value = "true" />-->
+    </properties>
   </persistence-unit>
 </persistence>

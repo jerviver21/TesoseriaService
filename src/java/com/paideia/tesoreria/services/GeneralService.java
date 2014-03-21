@@ -8,7 +8,8 @@ package com.paideia.tesoreria.services;
 
 import com.paideia.tesoreria.dominio.EstadoPago;
 import com.paideia.tesoreria.dominio.Notificacion;
-import com.paideia.tesoreria.dominio.Servicios;
+import com.paideia.tesoreria.dominio.Service;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.hibernate.exception.ConstraintViolationException;
 
 /**
  *
@@ -53,18 +55,25 @@ public class GeneralService {
 
     public Map getMapServiciosXNombre() {
         Map<String, String> mapa = new HashMap();
-        List<Servicios> servicios = em.createNamedQuery("Servicios.findAll").getResultList();
-        for(Servicios servicio: servicios){
-            mapa.put(servicio.getNombre(), servicio.getCodigo());
+        List<Service> servicios = em.createNamedQuery("Service.findAll").getResultList();
+        for(Service servicio: servicios){
+            mapa.put(servicio.getDescripcion().trim(), servicio.getCod().trim());
         }
         return mapa;
     }
 
-    public void cargarServicio(String codigo, String descripcion) {
-        Servicios servicio = new Servicios();
-        servicio.setCodigo(codigo.trim());
-        servicio.setNombre(descripcion.trim().toUpperCase());
-        em.merge(servicio);
+    public void cargarServicio(String codigo, String descripcion)throws LlaveDuplicadaException, Exception{
+        Service servicio = new Service();
+        servicio.setCod(codigo.trim());
+        servicio.setDescripcion(descripcion.trim().toUpperCase());
+        try {
+            em.merge(servicio);
+        } catch (Exception e) {
+            if(e instanceof ConstraintViolationException || (e.getCause() != null && e.getCause() instanceof ConstraintViolationException)){
+                throw new LlaveDuplicadaException("El servicio "+descripcion+" ya existe");
+            }
+            throw e;
+        }
     }
 
 }

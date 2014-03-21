@@ -1,0 +1,24 @@
+--
+-- Data for Name: servicios; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY servicios (codigo, nombre, id) FROM stdin;
+008	MADERA	6
+020	MANT. Y REPARACION BIENES MUEBLES	7
+037	DEMAS SERVICIOS GRABADOS	8
+022	OTROS SERVICIOS EMPRESARIALES	9
+021	MOVIMIENTO DE CARGA	10
+027	TRANSPORTE DE CARGA	11
+027	SERVICIO DE TRANSPORTE DE BIENES REALIZADO POR VIA TERRESTRE	12
+009	ARENA Y PIEDRA	13
+026	TRANSPORTE DE PERSONAS	14
+019	ALQUILER BIENES MUEBLES	15
+\.
+
+
+--
+-- Name: servicios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('servicios_id_seq', 15, true);
+

@@ -70,6 +70,9 @@ public class RegistroPago implements Serializable {
     @Size(max = 255)
     @Column(name = "observacion")
     private String observacion;
+    @Size(max = 1500)
+    @Column(name = "nombre_archivo")
+    private String nombreArchivo;
     @Size(max = 255)
     @Column(name = "otra_informacion")
     private String otraInformacion;
@@ -375,6 +378,20 @@ public class RegistroPago implements Serializable {
      */
     public void setDetraccion(Detraccion detraccion) {
         this.detraccion = detraccion;
+    }
+
+    /**
+     * @return the nombreArchivo
+     */
+    public String getNombreArchivo() {
+        return nombreArchivo;
+    }
+
+    /**
+     * @param nombreArchivo the nombreArchivo to set
+     */
+    public void setNombreArchivo(String nombreArchivo) {
+        this.nombreArchivo = nombreArchivo;
     }
     
 }

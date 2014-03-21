@@ -36,6 +36,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Detraccion.findAll", query = "SELECT d FROM Detraccion d"),
     @NamedQuery(name = "Detraccion.findByFact", query = "SELECT d FROM Detraccion d WHERE d.noFactura =:no"),
     @NamedQuery(name = "Detraccion.findDetraccion", query = "SELECT d FROM Detraccion d WHERE d.fechaCarga =:fecha AND d.archivoIn =:in"),
+    @NamedQuery(name = "Detraccion.findDetraccionIn", query = "SELECT d FROM Detraccion d WHERE d.archivoIn =:in"),
     @NamedQuery(name = "Detraccion.findForComprobante", query = "SELECT d FROM Detraccion d "
             + "WHERE d.archivoOut =:archivo AND d.codServicio =:servicio AND d.codOperacion =:opr AND "
             + "d.periodoTributario =:periodo AND d.proveedor.ruc =:ruc AND d.importe =:importe ")
@@ -95,12 +96,19 @@ public class Detraccion implements Serializable {
     @Size(max = 255)
     @Column(name = "archivo_out")
     private String archivoOut;
+    
+    @Column(name = "archivo_comprobante")
+    private String archivoComprobante;
+    
     @JoinColumn(name = "id_proveedor", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Proveedor proveedor;
     @JoinColumn(name = "id_empresa", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Empresa empresa;
+    
+    @Column(name = "aprobada_x_sunat")
+    private Boolean aprobadaSunat;
     
     @Transient
     private boolean cargadoComprobante = false;
@@ -324,6 +332,34 @@ public class Detraccion implements Serializable {
      */
     public void setNombreServicio(String nombreServicio) {
         this.nombreServicio = nombreServicio;
+    }
+
+    /**
+     * @return the aprobadaSunat
+     */
+    public Boolean getAprobadaSunat() {
+        return aprobadaSunat;
+    }
+
+    /**
+     * @param aprobadaSunat the aprobadaSunat to set
+     */
+    public void setAprobadaSunat(Boolean aprobadaSunat) {
+        this.aprobadaSunat = aprobadaSunat;
+    }
+
+    /**
+     * @return the archivoComprobante
+     */
+    public String getArchivoComprobante() {
+        return archivoComprobante;
+    }
+
+    /**
+     * @param archivoComprobante the archivoComprobante to set
+     */
+    public void setArchivoComprobante(String archivoComprobante) {
+        this.archivoComprobante = archivoComprobante;
     }
     
 }
