@@ -215,7 +215,10 @@ SELECT pg_catalog.setval('service_id_seq', 127, true);
 delete from reporte where id = 1;
 delete from reporte where id = 3;
 
+
 INSERT INTO licencia (no_licencia, fecha_inicio, fecha_fin, owner) VALUES ('00001', now(), '2015-12-31', 'owner');
+update users set id_licencia = 1 where usr='gaby';
+update empresa set no_licencia = '00001';
 
 
 delete from concepto_pago;

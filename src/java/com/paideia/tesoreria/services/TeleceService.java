@@ -294,6 +294,9 @@ public class TeleceService {
                     fService.pagarFactura(registro.getNoFactura(), registro);
                     asociarDetraccionPago(registro);
                 }
+            }else{
+                registro = findRegistro(registro.getNoPlanilla(), registro.getFechaPago(), registro.getConsecutivo());
+                registro = em.merge(registro);
             }
         }
         for(Notificacion registro:notificaciones){

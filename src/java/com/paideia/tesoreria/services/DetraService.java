@@ -62,7 +62,7 @@ public class DetraService {
     
 
     public void cargarArchivoAprobado(InputStream inputstream, String nombreArchivo, String noLicencia)throws ValidacionException, Exception{
-        
+        nombreArchivo = nombreArchivo.replaceAll(".*(D\\d{17}.[tT][xX][tT])", "$1");
         if(nombreArchivo.matches("D\\d{17}.(txt|TXT)")){
             int consecutivo = Integer.parseInt(nombreArchivo.replaceAll("D\\d{13}(\\d{4}).*", "$1"));
             Empresa empresa = eService.findEmpresaByLicencia(noLicencia);
@@ -344,7 +344,7 @@ public class DetraService {
                 }
                 
                 String codOperacion = "01";
-                String codServicio = datos[9].trim().matches("\\d{3}")?datos[9].trim():codsServicioXNombre.get(datos[9].trim().toUpperCase());
+                String codServicio = datos[9].trim().matches("(\\d{3}|\\d{2}|\\d{1})")?datos[9].trim():codsServicioXNombre.get(datos[9].trim().toUpperCase());
                 if(codServicio == null){
                     throw new ValidacionException("No existe un código de servicio para:  "+datos[9]+"  - Guardelo a través del Menú: Detracciones - Cargar Servicio");
                 }
