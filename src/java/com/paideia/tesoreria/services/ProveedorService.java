@@ -40,6 +40,11 @@ public class ProveedorService {
         return cuenta.get(0);
     }
     
+    public List<CuentasProveedor> findCuentasByProveedor(String ruc){
+        List<CuentasProveedor> cuentas = em.createNamedQuery("CuentasProveedor.findByRuc").setParameter("ruc", ruc).getResultList();
+        return cuentas;
+    }
+    
     public void edit(Proveedor proveedor){
         em.merge(proveedor);
     }

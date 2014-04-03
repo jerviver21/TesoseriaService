@@ -293,6 +293,7 @@ public class DetraService {
         int fila = 1;
         while(linea != null){
             if(linea.split(";").length >= 10 && !linea.matches(".*;;;;.*")){
+                System.out.println(fila+" - "+linea);
                 Detraccion detraccion = new Detraccion();
                 String[] datos = linea.split(";");
                 String razonSocial = datos[1].trim();
@@ -320,9 +321,9 @@ public class DetraService {
                 BigDecimal base = new BigDecimal(bases);
                 
                 String importes = "0.0";
-                if(datos[6].trim().matches(".*\\d,\\d\\d$")){
+                if(datos[6].trim().matches(".*\\d,?\\d?\\d?$")){
                     importes = datos[6].trim().replace(".", "").replace(",",".");
-                }else  if(datos[6].trim().matches(".*\\d\\.\\d\\d$")){
+                }else  if(datos[6].trim().matches(".*\\d\\.?\\d?\\d?$")){
                     importes = datos[6].trim().replace(",", "");
                 }else{
                     throw new ValidacionException("Importe invalido "+datos[6].trim()+". Fila no: "+fila);
@@ -357,7 +358,7 @@ public class DetraService {
                     proveedor.setInfoActualizada(Boolean.FALSE);
                     proveedor = em.merge(proveedor);
                 }
-                detraccion.setCodOperacion(codOperacion);
+                detraccion.setCodOperacion(String.format("%03d", Integer.parseInt(codOperacion)));
                 detraccion.setCodServicio(codServicio);
                 detraccion.setFechaCarga(new Date());
                 detraccion.setProveedor(proveedor);
