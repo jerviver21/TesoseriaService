@@ -358,8 +358,8 @@ public class DetraService {
                     proveedor.setInfoActualizada(Boolean.FALSE);
                     proveedor = em.merge(proveedor);
                 }
-                detraccion.setCodOperacion(String.format("%03d", Integer.parseInt(codOperacion)));
-                detraccion.setCodServicio(codServicio);
+                detraccion.setCodOperacion(String.format("%02d", Integer.parseInt(codOperacion)));
+                detraccion.setCodServicio(String.format("%03d", Integer.parseInt(codServicio)));
                 detraccion.setFechaCarga(new Date());
                 detraccion.setProveedor(proveedor);
                 detraccion.setPeriodoTributario(periodo);

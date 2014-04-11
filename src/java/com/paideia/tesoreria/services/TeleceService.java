@@ -75,8 +75,14 @@ public class TeleceService {
     }
     
     public List<RegistroPago> findPagosByRuc(String ruc){
+        
         List<RegistroPago> registros = em.createNamedQuery("RegistroPago.findByRuc")
                 .setParameter("ruc", ruc).getResultList();
+        
+        for(RegistroPago rp : registros){
+            rp.getProveedor().getRuc();
+            rp.getEstado().getNombre();
+        }
         return registros;
     }
     
@@ -326,7 +332,11 @@ public class TeleceService {
     }
 
     public void asociarDetraccionPago(Detraccion detraccion) {
-        List<RegistroPago> pagos = em.createNamedQuery("RegistroPago.findByFact").setParameter("no", detraccion.getNoFactura()).getResultList();
+        if(detraccion == null || detraccion.getNoFactura() == null|| !detraccion.getNoFactura().matches("\\d+")){
+            return;
+        }
+        List<RegistroPago> pagos = em.createNamedQuery("RegistroPago.findByFact")
+                .setParameter("no", String.format("%015d", Integer.parseInt(detraccion.getNoFactura()))).getResultList();
         for(RegistroPago pago : pagos){
             pago.setDetraccion(detraccion);
             em.merge(pago);
@@ -334,7 +344,11 @@ public class TeleceService {
     }
     
     public void asociarDetraccionPago(RegistroPago pago) {
-        List<Detraccion> pagos = em.createNamedQuery("Detraccion.findByFact").setParameter("no", pago.getNoFactura()).getResultList();
+        if(pago == null || pago.getNoFactura()== null || !pago.getNoFactura().matches("\\d+")){
+            return;
+        }
+        List<Detraccion> pagos = em.createNamedQuery("Detraccion.findByFact")
+                .setParameter("no", (Integer.parseInt(pago.getNoFactura())+"")).getResultList();
         if(!pagos.isEmpty()){
             pago.setDetraccion(pagos.get(0));
             em.merge(pago);

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.paideia.tesoreria.to;
+package com.paideia.tesoreria.dominio;
 
 import java.math.BigDecimal;
 
@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  *
  * @author jerviver21
  */
-public class SemtTO {
+public class Semt {
     private String ruc;
     private BigDecimal monto;
 
